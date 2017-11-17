@@ -12,11 +12,10 @@ function [ results ] = svm_decode_kfold_auc( data, labels, varargin )
 %   'plotROC', default false (plot ROC curve).
 %   'boxconstraint', default 1
 %   'kfold', default 5
-%   'standardize', default true (recommended; across training & test sets)
+%   'standardize', default true (recommended; across training set)
 %   'weights', default false (output vector of classifier weights & activation patterns associated with them cf. Haufe 2014)
 %
 % Outputs results structure with non-optional metrics: AUC, ROC, accuracy, Fscore, sensitivity, specificity. 
-% Structure can be accessed using e.g. accuracy = cell2mat({results.Accuracy}).
 % Optional: weights and weight-derived patterns.
 % Basic function using libSVM implementation of svm for classification. Only implements kfold crossvalidation.
 

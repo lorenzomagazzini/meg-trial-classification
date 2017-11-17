@@ -5,10 +5,10 @@ function results = svm_decode_holdout (train_data, train_labels, test_data, test
 % 'solver', default 1: L2-regularized dual problem solver (LibLinear);
 % 'boxconstraint', default 1
 % 'kfold', default 5
-% 'standardize', default true (recommended; across training & test sets)
+% 'standardize', default true (recommended; across training set)
 % 'weights', default false (output vector of classifier weights & activation patterns associated with them cf. Haufe 2014)
 %
-% Outputs results structure with non-optional metrics: accuracy, Fscore, sensitivity, specificity. Structure can be accessed using e.g. accuracy = cell2mat({results.Accuracy}).
+% Outputs results structure with non-optional metrics: accuracy, Fscore, sensitivity, specificity. 
 % Optional (as above): weights and weight-derived patterns.
 % Basic function using LibLinear implementation of svm for classification, using independent training and test sets.
 
