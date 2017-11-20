@@ -41,8 +41,9 @@ results.AccuracyMSError = accuracy(2);
 results.Confusion = confusionmat(test_labels,scores);
 results.Sensitivity = results.Confusion(1,1)/(sum(results.Confusion(1,:))); %TP/allP = TP/(TP+FN)
 results.Specificity = results.Confusion(2,2)/(sum(results.Confusion(2,:))); %TN/allN = TN/(FP+TN)
-PPP = results.Confusion(1,1)/(sum(results.Confusion(:,1))); %positive predictive value
-results.Fscore = (2*PPP*results.Sensitivity)/(PPP+results.Sensitivity); %F1-score
+results.Fscore1 = (2*PP*results.Sensitivity)/(PP+results.Sensitivity);
+results.Fscore2 = (2*NP*results.Specificity)/(NP+results.Specificity);
+results.WeightedFscore = ((sum(results.Confusion(:,1))/sum(results.Confusion(:)))*results.Fscore1) + ((sum(results.Confusion(:,2))/sum(results.Confusion(:)))*results.Fscore2);
 
 %calculate weights and compute activation patterns as per Haufe (2014)
 if svm_par.weights

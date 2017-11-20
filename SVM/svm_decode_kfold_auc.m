@@ -57,8 +57,9 @@ results.AccuracyFold = accuracy(1,:);
 results.Confusion = confusionmat(labels,allscore);
 results.Sensitivity = results.Confusion(1,1)/(sum(results.Confusion(1,:))); %TP/allP = TP/(TP+FN)
 results.Specificity = results.Confusion(2,2)/(sum(results.Confusion(2,:))); %TN/allN = TN/(FP+TN)
-PPP = results.Confusion(1,1)/(sum(results.Confusion(:,1)));
-results.Fscore = (2*PPP*results.Sensitivity)/(PPP+results.Sensitivity);
+results.Fscore1 = (2*PP*results.Sensitivity)/(PP+results.Sensitivity);
+results.Fscore2 = (2*NP*results.Specificity)/(NP+results.Specificity);
+results.WeightedFscore = ((sum(results.Confusion(:,1))/sum(results.Confusion(:)))*results.Fscore1) + ((sum(results.Confusion(:,2))/sum(results.Confusion(:)))*results.Fscore2);
 [results.ROC(:,1),results.ROC(:,2),~,results.AUC] = perfcurve(labels, post_prob(:,1),'1');
 
 if svm_par.plotROC
