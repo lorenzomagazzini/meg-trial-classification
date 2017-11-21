@@ -49,7 +49,7 @@ results.WeightedFscore = ((sum(results.Confusion(:,1))/sum(results.Confusion(:))
 if svm_par.weights
     results.Weights = svm_model.w;
     results.WeightPatterns = abs(cov(data)*results.Weights'/cov(data*results.Weights'))';
-    results.WeightPatternsNorm = (results.WeightPatterns-min(results.WeightPatterns))/(max(results.WeightPatterns)-min(results.WeightPatterns));
+    results.WeightPatternsNorm = (results.WeightPatterns-min(results.WeightPatterns))/(max(WeightPate
 end;
 
 
