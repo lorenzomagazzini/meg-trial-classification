@@ -39,7 +39,23 @@ cfg.title = 'Visually rejected trials';
 
 %% feature: within-channel variance summed over channels
 
-nTrial = lengthdata.trial
+%loop over all trials, distinguish good and rejected trials later
+nTrial = length(data.trial);
+chanvarsum_arr = nan(1,nTrial);
 for iTrial = 1: nTrial
-%select single trial
-data.trial{iTrial}
+    
+    %select single trial
+    chantimematrix = data.trial{iTrial};
+%     figure, imagesc(chantimematrix)
+    
+    %calculate within-channel metric
+    chanvar = var(chantimematrix,[],2);
+    
+    %sum metric across channels
+    chanvarsum = sum(chanvar);
+    
+    %store in array
+    chanvarsum_arr(iTrial) = chanvarsum;
+    
+end
+
