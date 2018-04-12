@@ -41,14 +41,21 @@ cfg.title = 'Visually rejected trials';
 
 %loop over all trials, distinguish good and rejected trials later
 nTrial = length(data.trial);
+chanvarsum_arr = nan(1,nTrial);
 for iTrial = 1: nTrial
     
     %select single trial
-    data.trial{iTrial}
+    chantimematrix = data.trial{iTrial};
+%     figure, imagesc(chantimematrix)
     
     %calculate within-channel metric
+    chanvar = var(chantimematrix,[],2);
     
-    %sum metric across trials
+    %sum metric across channels
+    chanvarsum = sum(chanvar);
+    
+    %store in array
+    chanvarsum_arr(iTrial) = chanvarsum;
     
 end
 
