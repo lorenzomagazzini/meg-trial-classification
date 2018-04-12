@@ -28,6 +28,8 @@ cd(datalabel_path)
 datalabel_filename = [subj_label '_' task_label '_rejTrials_visual.mat'];
 load(datalabel_filename)
 
+num_bad = length(rejTrialsIndex_visual);
+num_good = length(rejTrials_visual)-num_bad;
 
 %% plot visually rejected trials
 
@@ -59,3 +61,13 @@ for iTrial = 1: nTrial
     
 end
 
+%% feature: between-channel variance over time (we can sum this later, use sliding windows etc)
+
+alltrials = cat(3, data.trial{:});
+allvar = squeeze(var(alltrials,1))'; %trials x time
+
+%% plot them
+figure;
+
+subplot(1,2,1); plot(1:num_bad, chanvarsum_arr(rejTrials_visual==1),'r',num_bad+1:100, chanvarsum_arr(rejTrials_visual==0),'b'); title('Within-channel variance')
+subplot(1,2,2); plot(data.time{1},squeeze(mean(allvar(rejTrials_visual==1,:),1)),'r',data.time{1},squeeze(mean(allvar(rejTrials_visual==0,:),1)),'b');title('Between-channel variance')
