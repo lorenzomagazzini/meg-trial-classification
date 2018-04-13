@@ -75,37 +75,6 @@ allvar = squeeze(var(trl,[],1))'; %variance across channels: trials x time matri
 btwnchanvarmax_arr = max(allvar,[],2);
 
 
-%% plot histogram bars separately for keep and reject trials
-
-close all
-
-% metric_toplot = chanvarsum_arr;
-% metric_toplot = chanvarmax_arr;
-metric_toplot = btwnchanvarmax_arr;
-
-n_bins = 20;
-hist_bins = linspace(min(metric_toplot), max(metric_toplot), n_bins);
-hist_step = hist_bins(2)-hist_bins(1);
-
-metric_keptrials = metric_toplot(rejTrials_visual==0);
-n_keptrials = length(metric_keptrials);
-[keptrials_hist_freq, keptrials_hist_bins] = hist(metric_keptrials, hist_bins);
-
-metric_rejtrials = metric_toplot(rejTrials_visual==1);
-n_rejtrials = length(metric_rejtrials);
-[rejtrials_hist_freq, rejtrials_hist_bins] = hist(metric_rejtrials, hist_bins);
-
-figure('color','w')
-hold on
-h_kepbar = bar(keptrials_hist_bins-(hist_step/10), keptrials_hist_freq, 'facecolor',[.4 .4 .4]);
-h_rejbar = bar(rejtrials_hist_bins+(hist_step/10), rejtrials_hist_freq, 'facecolor',[1 .4 .4]);
-
-xlabel('summed within-channel variance')
-ylabel('n trials')
-h_leg = legend([h_kepbar, h_rejbar], [num2str(n_keptrials) ' keep trials'], [num2str(n_rejtrials) ' reject trials']);
-h_leg.Box = 'off';
-
-
 %% plot both types of variance
 figure;
 subplot(2,2,1); plot(1:num_bad, chanvarsum_arr(rejTrials_visual==1),'.r',num_bad+1:100, chanvarsum_arr(rejTrials_visual==0),'.b'); title('Within-channel variance (per trial)')
@@ -167,4 +136,38 @@ subplot(2,2,1); plot(1:num_bad, kurt_sum(rejTrials_visual==1),'.r',num_bad+1:100
 subplot(2,2,2); plot(1:num_bad, kurt_chan_mean(rejTrials_visual==1),'.r',num_bad+1:100, kurt_chan_mean(rejTrials_visual==0),'.b'); title('Channel kurtosis averaged across time'); 
 subplot(2,2,3); plot(data.time{1},kurt_chan(:,rejTrials_visual==1),'r');title('Channel kurtosis'); ylim([min(kurt_chan(:)) max(kurt_chan(:))])
 subplot(2,2,4); plot(data.time{1},kurt_chan(:,rejTrials_visual==0),'b');title('Channel kurtosis'); ylim([min(kurt_chan(:)) max(kurt_chan(:))])
+
+
+%% plot histogram bars separately for keep and reject trials
+
+close all
+
+% metric_toplot = chanvarsum_arr;
+% metric_toplot = chanvarmax_arr;
+% metric_toplot = btwnchanvarmax_arr;
+% metric_toplot = kurt_sum;
+metric_toplot = kurt_chan_mean;
+
+n_bins = 20;
+hist_bins = linspace(min(metric_toplot), max(metric_toplot), n_bins);
+hist_step = hist_bins(2)-hist_bins(1);
+
+metric_keptrials = metric_toplot(rejTrials_visual==0);
+n_keptrials = length(metric_keptrials);
+[keptrials_hist_freq, keptrials_hist_bins] = hist(metric_keptrials, hist_bins);
+
+metric_rejtrials = metric_toplot(rejTrials_visual==1);
+n_rejtrials = length(metric_rejtrials);
+[rejtrials_hist_freq, rejtrials_hist_bins] = hist(metric_rejtrials, hist_bins);
+
+figure('color','w')
+hold on
+h_kepbar = bar(keptrials_hist_bins-(hist_step/10), keptrials_hist_freq, 'facecolor',[.4 .4 .4]);
+h_rejbar = bar(rejtrials_hist_bins+(hist_step/10), rejtrials_hist_freq, 'facecolor',[1 .4 .4]);
+
+xlabel('summed within-channel variance')
+ylabel('n trials')
+h_leg = legend([h_kepbar, h_rejbar], [num2str(n_keptrials) ' keep trials'], [num2str(n_rejtrials) ' reject trials']);
+h_leg.Box = 'off';
+
 
