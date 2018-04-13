@@ -39,27 +39,63 @@ cfg.title = 'Visually rejected trials';
 [hSubplots, hFigure, hTitle] = amprej_multitrialplot(cfg, data, rejTrials_visual)
 
 
-%% feature: within-channel variance summed over channels
+%% feature: within-channel variance summed over channels and max across trials
 
 %loop over all trials, distinguish good and rejected trials later
 nTrial = length(data.trial);
 chanvarsum_arr = nan(1,nTrial);
+chanvarmax_arr = nan(1,nTrial);
 for iTrial = 1: nTrial
     
     %select single trial
     chantimematrix = data.trial{iTrial};
 %     figure, imagesc(chantimematrix)
     
-    %calculate within-channel metric
+    %calculate within-channel variance
     chanvar = var(chantimematrix,[],2);
     
-    %sum metric across channels
+    %sum variance over channels
     chanvarsum = sum(chanvar);
+    
+    %max variance across trials
+    chanvarmax = max(chanvar);
     
     %store in array
     chanvarsum_arr(iTrial) = chanvarsum;
+    chanvarmax_arr(iTrial) = chanvarmax;
     
 end
+
+
+%% plot histogram bars separately for keep and reject trials
+
+close all
+
+metric_toplot = chanvarsum_arr;
+% metric_toplot = chanvarmax_arr;
+
+n_bins = 20;
+hist_bins = linspace(min(metric_toplot), max(metric_toplot), n_bins);
+hist_step = hist_bins(2)-hist_bins(1);
+
+metric_keptrials = metric_toplot(rejTrials_visual==0);
+n_keptrials = length(metric_keptrials);
+[keptrials_hist_freq, keptrials_hist_bins] = hist(metric_keptrials, hist_bins);
+
+metric_rejtrials = metric_toplot(rejTrials_visual==1);
+n_rejtrials = length(metric_rejtrials);
+[rejtrials_hist_freq, rejtrials_hist_bins] = hist(metric_rejtrials, hist_bins);
+
+figure('color','w')
+hold on
+h_kepbar = bar(keptrials_hist_bins-(hist_step/10), keptrials_hist_freq, 'facecolor',[.4 .4 .4]);
+h_rejbar = bar(rejtrials_hist_bins+(hist_step/10), rejtrials_hist_freq, 'facecolor',[1 .4 .4]);
+
+xlabel('summed within-channel variance')
+ylabel('n trials')
+h_leg = legend([h_kepbar, h_rejbar], [num2str(n_keptrials) ' keep trials'], [num2str(n_rejtrials) ' reject trials']);
+h_leg.Box = 'off';
+
 
 %% feature: between-channel variance over time (we can sum this later, use sliding windows etc)
 
