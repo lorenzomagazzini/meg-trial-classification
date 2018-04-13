@@ -67,12 +67,21 @@ for iTrial = 1: nTrial
 end
 
 
+%% feature: between-channel variance over time (we can sum this later, use sliding windows etc)
+
+trl = cat(3, data.trial{:});
+allvar = squeeze(var(trl,[],1))'; %variance across channels: trials x time matrix
+
+btwnchanvarmax_arr = max(allvar,[],2);
+
+
 %% plot histogram bars separately for keep and reject trials
 
 close all
 
-metric_toplot = chanvarsum_arr;
+% metric_toplot = chanvarsum_arr;
 % metric_toplot = chanvarmax_arr;
+metric_toplot = btwnchanvarmax_arr;
 
 n_bins = 20;
 hist_bins = linspace(min(metric_toplot), max(metric_toplot), n_bins);
@@ -96,11 +105,6 @@ ylabel('n trials')
 h_leg = legend([h_kepbar, h_rejbar], [num2str(n_keptrials) ' keep trials'], [num2str(n_rejtrials) ' reject trials']);
 h_leg.Box = 'off';
 
-
-%% feature: between-channel variance over time (we can sum this later, use sliding windows etc)
-
-trl = cat(3, data.trial{:});
-allvar = squeeze(var(trl,[],1))'; %variance across channels: trials x time matrix
 
 %% plot both types of variance
 figure;
