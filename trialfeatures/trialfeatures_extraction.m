@@ -65,72 +65,20 @@ wthn_chan_var_sum = sum(wthn_chan_var);
 wthn_chan_var_max = max(wthn_chan_var);
 
 
-%plot within-channel variance
-
-close all
-
-%plot variance data
-mtrc = wthn_chan_var;
-mtrc1 = wthn_chan_var_sum;
-mtrc1_label = 'var sum';
-mtrc2 = wthn_chan_var_max;
-mtrc2_label = 'var max';
-
-%separate keep and reject trials
-mtrc1_keep = mtrc1(trls_keep);
-mtrc1_rjct = mtrc1(trls_rjct);
-mtrc2_keep = mtrc2(trls_keep);
-mtrc2_rjct = mtrc2(trls_rjct);
+%% plot within-channel  stuff
 
 % %plot (channels x trials matrix)
+% mtrc = wthn_chan_var;
 % figure
 % imagesc(log(mtrc))
 % % colormap(cmocean('amp'))
 
-%plotting colors
-color_keep = [35,139,69]/255;
-color_rjct = [215,48,31]/255;
-
-%plot sum vs max var
-figure
-subplot(2,2,1:2) %plot data
-scatter(log(mtrc1_keep), log(mtrc2_keep), 'MarkerEdgeColor', color_keep)
-hold on
-scatter(log(mtrc1_rjct), log(mtrc2_rjct), 'MarkerEdgeColor', color_rjct)
-xlabel(mtrc1_label)
-ylabel(mtrc2_label)
-title('log-scale comparison')
-
-%distribution for metric1
-mtrc1_mu_keep = mean(log(mtrc1_keep)); 
-mtrc1_sd_keep = std(log(mtrc1_keep)); 
-mtrc1_ix_keep = linspace(min(mtrc1_keep),max(mtrc1_keep)); 
-mtrc1_iy_keep = pdf('lognormal', mtrc1_ix_keep, mtrc1_mu_keep, mtrc1_sd_keep);
-mtrc1_mu_rjct = mean(log(mtrc1_rjct)); 
-mtrc1_sd_rjct = std(log(mtrc1_rjct)); 
-mtrc1_ix_rjct = linspace(min(mtrc1_rjct),max(mtrc1_rjct)); 
-mtrc1_iy_rjct = pdf('lognormal', mtrc1_ix_rjct, mtrc1_mu_rjct, mtrc1_sd_rjct);
-
-%distribution for metric2
-mtrc2_mu_keep = mean(log(mtrc2_keep)); 
-mtrc2_sd_keep = std(log(mtrc2_keep)); 
-mtrc2_ix_keep = linspace(min(mtrc2_keep),max(mtrc2_keep)); 
-mtrc2_iy_keep = pdf('lognormal', mtrc2_ix_keep, mtrc2_mu_keep, mtrc2_sd_keep);
-mtrc2_mu_rjct = mean(log(mtrc2_rjct)); 
-mtrc2_sd_rjct = std(log(mtrc2_rjct)); 
-mtrc2_ix_rjct = linspace(min(mtrc2_rjct),max(mtrc2_rjct)); 
-mtrc2_iy_rjct = pdf('lognormal', mtrc2_ix_rjct, mtrc2_mu_rjct, mtrc2_sd_rjct);
-
-subplot(2,2,3)
-plot(mtrc1_ix_keep,mtrc1_iy_keep, 'Color',color_keep);
-hold on
-plot(mtrc1_ix_rjct,mtrc1_iy_rjct, 'Color',color_rjct);
-title([mtrc1_label ' distribution'])
-subplot(2,2,4)
-plot(mtrc2_ix_keep,mtrc2_iy_keep, 'Color',color_keep);
-hold on
-plot(mtrc2_ix_rjct,mtrc2_iy_rjct, 'Color',color_rjct);
-title([mtrc2_label ' distribution'])
+%compare variance sum VS variance max
+mtrc1 = wthn_chan_var_sum;
+mtrc2 = wthn_chan_var_max;
+mtrc1_label = 'var sum';
+mtrc2_label = 'var max';
+plot_wthn_chan_variance_comparison( mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct )
 
 
 %% feature: between-channel variance over time (we can sum this later, use sliding windows etc)
