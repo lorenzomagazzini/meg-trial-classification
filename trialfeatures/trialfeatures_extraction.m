@@ -33,38 +33,15 @@ num_good = length(rejTrials_visual)-num_bad;
 
 %% plot visually rejected trials
 
-cfg = [];
-cfg.yLim = [-1 1]*5e-12;
-cfg.title = 'Visually rejected trials';
-[hSubplots, hFigure, hTitle] = amprej_multitrialplot(cfg, data, rejTrials_visual)
+% cfg = [];
+% cfg.yLim = [-1 1]*5e-12;
+% cfg.title = 'Visually rejected trials';
+% [hSubplots, hFigure, hTitle] = amprej_multitrialplot(cfg, data, rejTrials_visual)
 
 
-%% feature: within-channel variance summed over channels and max across trials
+%% metric: within-channel variance summed over channels and max across trials
 
-%loop over all trials, distinguish good and rejected trials later
-nTrial = length(data.trial);
-chanvarsum_arr = nan(1,nTrial);
-chanvarmax_arr = nan(1,nTrial);
-for iTrial = 1: nTrial
-    
-    %select single trial
-    chantimematrix = data.trial{iTrial};
-%     figure, imagesc(chantimematrix)
-    
-    %calculate within-channel variance
-    chanvar = var(chantimematrix,[],2);
-    
-    %sum variance over channels
-    chanvarsum = sum(chanvar);
-    
-    %max variance across trials
-    chanvarmax = max(chanvar);
-    
-    %store in array
-    chanvarsum_arr(iTrial) = chanvarsum;
-    chanvarmax_arr(iTrial) = chanvarmax;
-    
-end
+get_wthn_chan_variance( data )
 
 
 %% feature: between-channel variance over time (we can sum this later, use sliding windows etc)
