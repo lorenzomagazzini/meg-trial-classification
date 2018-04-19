@@ -122,6 +122,33 @@ mtrc2_label = 'between-chan var avg';
 plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
 
+%% plot histogram bars separately for keep and reject trials
+
+close all
+
+figure('color','w')
+
+mtrc = wthn_chan_var_sum;
+mtrc_label = 'within-channel variance sum';
+subplot(1,4,1)
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+mtrc = wthn_chan_var_max;
+mtrc_label = 'within-channel variance max';
+subplot(1,4,2)
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+mtrc = btwn_chan_var_avg;
+mtrc_label = 'between-channel variance avg';
+subplot(1,4,3)
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+mtrc = btwn_chan_var_max;
+mtrc_label = 'between-channel variance max';
+subplot(1,4,4)
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+
 %% plot both types of variance (Diana's)
 
 mtrcA = wthn_chan_var_sum;
@@ -133,7 +160,14 @@ subplot(2,2,3); plot(data.time{1},btwn_chan_var(:,trls_rjct),'r');title('Between
 subplot(2,2,4); plot(data.time{1},btwn_chan_var(:,trls_keep),'b');title('Between-channel variance (per trial - good)')
 
 
+%%                  !!! NOTE !!!
+
+%the following code hasn't been checked by Lorenzo yet
+
+
 %% feature: z-value modelled after ft_artifact_zvalue
+
+
 cfg = [];
 cfg.bpfilter = 'yes';
 cfg.bpfreq = [110 140]; %e.g. for muscle artifacts
@@ -188,38 +222,4 @@ subplot(2,2,1); plot(1:num_bad, kurt_sum(trls_rjct),'.r',num_bad+1:100, kurt_sum
 subplot(2,2,2); plot(1:num_bad, kurt_chan_mean(trls_rjct),'.r',num_bad+1:100, kurt_chan_mean(trls_keep),'.b'); title('Channel kurtosis averaged across time'); 
 subplot(2,2,3); plot(data.time{1},kurt_chan(:,trls_rjct),'r');title('Channel kurtosis'); ylim([min(kurt_chan(:)) max(kurt_chan(:))])
 subplot(2,2,4); plot(data.time{1},kurt_chan(:,trls_keep),'b');title('Channel kurtosis'); ylim([min(kurt_chan(:)) max(kurt_chan(:))])
-
-
-%% plot histogram bars separately for keep and reject trials
-
-close all
-
-% metric_toplot = chanvarsum_arr;
-% metric_toplot = chanvarmax_arr;
-% metric_toplot = btwnchanvarmax_arr;
-% metric_toplot = kurt_sum;
-metric_toplot = kurt_chan_mean;
-
-n_bins = 20;
-hist_bins = linspace(min(metric_toplot), max(metric_toplot), n_bins);
-hist_step = hist_bins(2)-hist_bins(1);
-
-metric_keptrials = metric_toplot(trls_keep);
-n_keptrials = length(metric_keptrials);
-[keptrials_hist_freq, keptrials_hist_bins] = hist(metric_keptrials, hist_bins);
-
-metric_rejtrials = metric_toplot(trls_rjct);
-n_rejtrials = length(metric_rejtrials);
-[rejtrials_hist_freq, rejtrials_hist_bins] = hist(metric_rejtrials, hist_bins);
-
-figure('color','w')
-hold on
-h_kepbar = bar(keptrials_hist_bins-(hist_step/10), keptrials_hist_freq, 'facecolor',[.4 .4 .4]);
-h_rejbar = bar(rejtrials_hist_bins+(hist_step/10), rejtrials_hist_freq, 'facecolor',[1 .4 .4]);
-
-xlabel('summed within-channel variance')
-ylabel('n trials')
-h_leg = legend([h_kepbar, h_rejbar], [num2str(n_keptrials) ' keep trials'], [num2str(n_rejtrials) ' reject trials']);
-h_leg.Box = 'off';
-
 
