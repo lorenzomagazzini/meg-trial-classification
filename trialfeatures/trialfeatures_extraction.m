@@ -34,15 +34,23 @@ cd(datalabel_path)
 datalabel_filename = [subj_label '_' task_label '_rejTrials_visual.mat'];
 load(datalabel_filename)
 
-num_bad = length(rejTrialsIndex_visual);
-num_good = length(rejTrials_visual)-num_bad;
+%trials to keep
+trls_keep = ~rejTrials_visual;
+trls_indx_keep = find(trls_keep);
+ntrl_keep = length(trls_indx_keep);
+
+%trials to reject
+trls_rjct = rejTrials_visual;
+trls_indx_rjct = find(trls_rjct);
+ntrl_rjct = length(trls_indx_rjct);
+
 
 %% plot visually rejected trials
 
 % cfg = [];
 % cfg.yLim = [-1 1]*5e-12;
 % cfg.title = 'Visually rejected trials';
-% [hSubplots, hFigure, hTitle] = amprej_multitrialplot(cfg, data, rejTrials_visual)
+% [hSubplots, hFigure, hTitle] = amprej_multitrialplot(cfg, data, trls_rjct)
 
 
 %% metric: within-channel variance (sum & max across trials)
@@ -50,31 +58,53 @@ num_good = length(rejTrials_visual)-num_bad;
 %calculate variance
 wthn_chan_var = get_wthn_chan_variance(data);
 
-% %plot channels x trials matrix
-% figure
-% imagesc(wthn_chan_var)
-% % colormap(cmocean('amp'))
-
 %sum variance over channels
 wthn_chan_var_sum = sum(wthn_chan_var);
 
 %max variance across trials
 wthn_chan_var_max = max(wthn_chan_var);
 
-%plot sum vs max var
-figure
-trl_keep_color = [35,139,69]/255;
-trl_rjct_color = [215,48,31]/255;
-subplot(1,2,1)
-scatter(wthn_chan_var_sum(~rejTrials_visual), wthn_chan_var_max(~rejTrials_visual), 'MarkerEdgeColor', trl_keep_color)
-hold on
-scatter(wthn_chan_var_sum(rejTrials_visual), wthn_chan_var_max(rejTrials_visual), 'MarkerEdgeColor', trl_rjct_color)
 
-%plot on log scale
-subplot(1,2,2)
-scatter(log(wthn_chan_var_sum(~rejTrials_visual)), log(wthn_chan_var_max(~rejTrials_visual)), 'MarkerEdgeColor', trl_keep_color)
+%% plot metric
+
+mtrc = wthn_chan_var;
+mtrc1 = wthn_chan_var_sum;
+
+% %plot log variance (channels x trials matrix)
+% figure
+% imagesc(log(rjct))
+% % colormap(cmocean('amp'))
+
+%plotting colors
+color_keep = [35,139,69]/255;
+color_rjct = [215,48,31]/255;
+
+%plot sum vs max var
+varsum_keep = mtrc1(trls_keep);
+varsum_rjct = mtrc1(trls_rjct);
+figure
+subplot(1,2,1) %plot data
+scatter(varsum_keep, wthn_chan_var_max(trls_keep), 'MarkerEdgeColor', color_keep)
 hold on
-scatter(log(wthn_chan_var_sum(rejTrials_visual)), log(wthn_chan_var_max(rejTrials_visual)), 'MarkerEdgeColor', trl_rjct_color)
+scatter(varsum_rjct, wthn_chan_var_max(trls_rjct), 'MarkerEdgeColor', color_rjct)
+subplot(1,2,2) %plot on log scale
+scatter(log(varsum_keep), log(wthn_chan_var_max(trls_keep)), 'MarkerEdgeColor', color_keep)
+hold on
+scatter(log(varsum_rjct), log(wthn_chan_var_max(trls_rjct)), 'MarkerEdgeColor', color_rjct)
+
+mu_keep = mean(log(varsum_keep)); 
+sd_keep = std(log(varsum_keep)); 
+ix_keep = linspace(min(varsum_keep),max(varsum_keep)); 
+iy_keep = pdf('lognormal', ix_keep, mu_keep, sd_keep);
+mu_rjct = mean(log(varsum_rjct)); 
+sd_rjct = std(log(varsum_rjct)); 
+ix_rjct = linspace(min(varsum_rjct),max(varsum_rjct)); 
+iy_rjct = pdf('lognormal', ix_rjct, mu_rjct, sd_rjct);
+figure
+subplot(1,2,1)
+plot(ix_keep,iy_keep, 'Color',color_keep);
+hold on
+plot(ix_rjct,iy_rjct, 'Color',color_rjct);
 
 
 %% feature: between-channel variance over time (we can sum this later, use sliding windows etc)
@@ -87,10 +117,10 @@ btwnchanvarmax_arr = max(allvar,[],2);
 
 %% plot both types of variance
 figure;
-subplot(2,2,1); plot(1:num_bad, chanvarsum_arr(rejTrials_visual==1),'.r',num_bad+1:100, chanvarsum_arr(rejTrials_visual==0),'.b'); title('Within-channel variance (per trial)')
-subplot(2,2,2); plot(data.time{1},squeeze(median(allvar(rejTrials_visual==1,:),1)),'r',data.time{1},squeeze(median(allvar(rejTrials_visual==0,:),1)),'b');title('Between-channel variance (median)')
-subplot(2,2,3); plot(data.time{1},allvar(rejTrials_visual==1,:),'r');title('Between-channel variance (per trial - bad)')
-subplot(2,2,4); plot(data.time{1},allvar(rejTrials_visual==0,:),'b');title('Between-channel variance (per trial - good)')
+subplot(2,2,1); plot(1:num_bad, chanvarsum_arr(trls_rjct==1),'.r',num_bad+1:100, chanvarsum_arr(trls_keep),'.b'); title('Within-channel variance (per trial)')
+subplot(2,2,2); plot(data.time{1},squeeze(median(allvar(trls_rjct,:),1)),'r',data.time{1},squeeze(median(allvar(trls_keep,:),1)),'b');title('Between-channel variance (median)')
+subplot(2,2,3); plot(data.time{1},allvar(trls_rjct,:),'r');title('Between-channel variance (per trial - bad)')
+subplot(2,2,4); plot(data.time{1},allvar(trls_keep,:),'b');title('Between-channel variance (per trial - good)')
 %% feature: z-value modelled after ft_artifact_zvalue
 cfg = [];
 cfg.bpfilter = 'yes';
@@ -127,12 +157,12 @@ zvar = zsum./sqrt(size(trl,1));
 
 %plot z-value metrics
 figure;
-subplot(3,2,1); plot(1:num_bad, var(zvar(rejTrials_visual==1,:),[],2),'.r',num_bad+1:100, var(zvar(rejTrials_visual==0,:),[],2),'.b'); title('Variance of z-value'); 
-subplot(3,2,2); plot(1:num_bad, var(zmax(rejTrials_visual==1,:),[],2),'.r',num_bad+1:100, var(zmax(rejTrials_visual==0,:),[],2),'.b'); title('Maximal z-value')
-subplot(3,2,3); plot(data.time{1},zvar(rejTrials_visual==1,:),'r');title('Var z (per trial - bad)'); ylim([min(zvar(:)) max(zvar(:))])
-subplot(3,2,4); plot(data.time{1},zvar(rejTrials_visual==0,:),'b');title('Var z (per trial - good)'); ylim([min(zvar(:)) max(zvar(:))])
-subplot(3,2,5); plot(data.time{1},zmax(rejTrials_visual==1,:),'r');title('Max z-value (per trial - bad)'); ylim([min(zmax(:)) max(zmax(:))])
-subplot(3,2,6); plot(data.time{1},zmax(rejTrials_visual==0,:),'b');title('Max z-value (per trial - good)'); ylim([min(zmax(:)) max(zmax(:))])
+subplot(3,2,1); plot(1:num_bad, var(zvar(trls_rjct,:),[],2),'.r',num_bad+1:100, var(zvar(trls_keep,:),[],2),'.b'); title('Variance of z-value'); 
+subplot(3,2,2); plot(1:num_bad, var(zmax(trls_rjct,:),[],2),'.r',num_bad+1:100, var(zmax(trls_keep,:),[],2),'.b'); title('Maximal z-value')
+subplot(3,2,3); plot(data.time{1},zvar(trls_rjct,:),'r');title('Var z (per trial - bad)'); ylim([min(zvar(:)) max(zvar(:))])
+subplot(3,2,4); plot(data.time{1},zvar(trls_keep,:),'b');title('Var z (per trial - good)'); ylim([min(zvar(:)) max(zvar(:))])
+subplot(3,2,5); plot(data.time{1},zmax(trls_rjct,:),'r');title('Max z-value (per trial - bad)'); ylim([min(zmax(:)) max(zmax(:))])
+subplot(3,2,6); plot(data.time{1},zmax(trls_keep,:),'b');title('Max z-value (per trial - good)'); ylim([min(zmax(:)) max(zmax(:))])
 
 %% feature: kurtosis
 trl = cat(3, data.trial{:});
@@ -142,10 +172,10 @@ kurt_chan = squeeze(kurtosis(trl,[],1)); %kurtosis along channel axis
 kurt_chan_mean = squeeze(mean(kurt,1)); %average it over time
 
 figure;
-subplot(2,2,1); plot(1:num_bad, kurt_sum(rejTrials_visual==1),'.r',num_bad+1:100, kurt_sum(rejTrials_visual==0),'.b'); title('Time kurtosis summed across channels'); 
-subplot(2,2,2); plot(1:num_bad, kurt_chan_mean(rejTrials_visual==1),'.r',num_bad+1:100, kurt_chan_mean(rejTrials_visual==0),'.b'); title('Channel kurtosis averaged across time'); 
-subplot(2,2,3); plot(data.time{1},kurt_chan(:,rejTrials_visual==1),'r');title('Channel kurtosis'); ylim([min(kurt_chan(:)) max(kurt_chan(:))])
-subplot(2,2,4); plot(data.time{1},kurt_chan(:,rejTrials_visual==0),'b');title('Channel kurtosis'); ylim([min(kurt_chan(:)) max(kurt_chan(:))])
+subplot(2,2,1); plot(1:num_bad, kurt_sum(trls_rjct),'.r',num_bad+1:100, kurt_sum(trls_keep),'.b'); title('Time kurtosis summed across channels'); 
+subplot(2,2,2); plot(1:num_bad, kurt_chan_mean(trls_rjct),'.r',num_bad+1:100, kurt_chan_mean(trls_keep),'.b'); title('Channel kurtosis averaged across time'); 
+subplot(2,2,3); plot(data.time{1},kurt_chan(:,trls_rjct),'r');title('Channel kurtosis'); ylim([min(kurt_chan(:)) max(kurt_chan(:))])
+subplot(2,2,4); plot(data.time{1},kurt_chan(:,trls_keep),'b');title('Channel kurtosis'); ylim([min(kurt_chan(:)) max(kurt_chan(:))])
 
 
 %% plot histogram bars separately for keep and reject trials
@@ -162,11 +192,11 @@ n_bins = 20;
 hist_bins = linspace(min(metric_toplot), max(metric_toplot), n_bins);
 hist_step = hist_bins(2)-hist_bins(1);
 
-metric_keptrials = metric_toplot(rejTrials_visual==0);
+metric_keptrials = metric_toplot(trls_keep);
 n_keptrials = length(metric_keptrials);
 [keptrials_hist_freq, keptrials_hist_bins] = hist(metric_keptrials, hist_bins);
 
-metric_rejtrials = metric_toplot(rejTrials_visual==1);
+metric_rejtrials = metric_toplot(trls_rjct);
 n_rejtrials = length(metric_rejtrials);
 [rejtrials_hist_freq, rejtrials_hist_bins] = hist(metric_rejtrials, hist_bins);
 
