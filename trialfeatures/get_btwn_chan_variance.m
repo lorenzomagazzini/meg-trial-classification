@@ -9,6 +9,6 @@ function [ btwn_chan_var ] = get_btwn_chan_variance( data )
 %store trials in 3D matrix (good and bad trials distinguished later)
 trl = cat(3, data.trial{:});
 
-%calculate variance across channels, separately for each trial (NTrl x NTime)
-btwn_chan_var = squeeze(var(trl,[],1));
+%calculate variance across channels, separately for each trial (NTime x NTrl)
+btwn_chan_var = squeeze(var(trl,[],1))';
 
