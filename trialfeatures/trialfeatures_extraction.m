@@ -44,6 +44,7 @@ trls_rjct = rejTrials_visual;
 trls_indx_rjct = find(trls_rjct);
 ntrl_rjct = length(trls_indx_rjct);
 
+ntrl = ntrl_keep+ntrl_rjct;
 
 %% plot visually rejected trials
 
@@ -121,12 +122,17 @@ mtrc2_label = 'between-chan var avg';
 plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
 
-%% plot both types of variance
+%% plot both types of variance (Diana's)
+
+mtrcA = wthn_chan_var_sum;
+
 figure;
-subplot(2,2,1); plot(1:num_bad, chanvarsum_arr(trls_rjct==1),'.r',num_bad+1:100, chanvarsum_arr(trls_keep),'.b'); title('Within-channel variance (per trial)')
-subplot(2,2,2); plot(data.time{1},squeeze(median(allvar(trls_rjct,:),1)),'r',data.time{1},squeeze(median(allvar(trls_keep,:),1)),'b');title('Between-channel variance (median)')
-subplot(2,2,3); plot(data.time{1},allvar(trls_rjct,:),'r');title('Between-channel variance (per trial - bad)')
-subplot(2,2,4); plot(data.time{1},allvar(trls_keep,:),'b');title('Between-channel variance (per trial - good)')
+subplot(2,2,1); plot(1:ntrl_rjct, mtrcA(trls_rjct),'.r',ntrl_rjct+1:ntrl, mtrcA(trls_keep),'.b'); title('Within-channel variance (per trial)')
+subplot(2,2,2); plot(data.time{1},squeeze(median(btwn_chan_var(:,trls_rjct),2)),'r',data.time{1},squeeze(median(btwn_chan_var(:,trls_keep),2)),'b');title('Between-channel variance (median)')
+subplot(2,2,3); plot(data.time{1},btwn_chan_var(:,trls_rjct),'r');title('Between-channel variance (per trial - bad)')
+subplot(2,2,4); plot(data.time{1},btwn_chan_var(:,trls_keep),'b');title('Between-channel variance (per trial - good)')
+
+
 %% feature: z-value modelled after ft_artifact_zvalue
 cfg = [];
 cfg.bpfilter = 'yes';
