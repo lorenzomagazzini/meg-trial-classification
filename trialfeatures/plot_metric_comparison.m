@@ -1,7 +1,7 @@
-function [  ] = plot_wthn_chan_variance_comparison( mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct )
-%plot_wthn_chan_variance_comparison( mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct )
+function [  ] = plot_metric_comparison( mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct )
+%plot_metric_comparison( mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct )
 %   Plot comparison of two metrics (e.g., within-channel variance, max VS sum).
-%   Also plot distribution of each metric, comparing keep and reject trials.
+%   Also plot distribution of each metric separately, comparing keep and reject trials.
 
 %plotting colors
 color_keep = [35,139,69]/255;
