@@ -1,4 +1,10 @@
 
+%Lorenzo's paths:
+% addpath('~/git-lab/Trial-classification/trialfeatures/')
+
+
+%%
+
 clear
 
 base_path = '/cubric/collab/meg-cleaning/';
@@ -39,9 +45,21 @@ num_good = length(rejTrials_visual)-num_bad;
 % [hSubplots, hFigure, hTitle] = amprej_multitrialplot(cfg, data, rejTrials_visual)
 
 
-%% metric: within-channel variance summed over channels and max across trials
+%% metric: within-channel variance (sum & max across trials)
 
-get_wthn_chan_variance( data )
+%calculate variance
+wthn_chan_var = get_wthn_chan_variance(data);
+
+% %plot channels x trials matrix
+% figure
+% imagesc(wthn_chan_var)
+% % colormap(cmocean('amp'))
+
+%sum variance over channels
+wthn_chan_var_sum = sum(wthn_chan_var);
+
+%max variance across trials
+wthn_chan_var_max = max(wthn_chan_var);
 
 
 %% feature: between-channel variance over time (we can sum this later, use sliding windows etc)
