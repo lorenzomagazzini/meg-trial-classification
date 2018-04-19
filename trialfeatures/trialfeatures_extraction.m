@@ -61,6 +61,21 @@ wthn_chan_var_sum = sum(wthn_chan_var);
 %max variance across trials
 wthn_chan_var_max = max(wthn_chan_var);
 
+%plot sum vs max var
+figure
+trl_keep_color = [35,139,69]/255;
+trl_rjct_color = [215,48,31]/255;
+subplot(1,2,1)
+scatter(wthn_chan_var_sum(~rejTrials_visual), wthn_chan_var_max(~rejTrials_visual), 'MarkerEdgeColor', trl_keep_color)
+hold on
+scatter(wthn_chan_var_sum(rejTrials_visual), wthn_chan_var_max(rejTrials_visual), 'MarkerEdgeColor', trl_rjct_color)
+
+%plot on log scale
+subplot(1,2,2)
+scatter(log(wthn_chan_var_sum(~rejTrials_visual)), log(wthn_chan_var_max(~rejTrials_visual)), 'MarkerEdgeColor', trl_keep_color)
+hold on
+scatter(log(wthn_chan_var_sum(rejTrials_visual)), log(wthn_chan_var_max(rejTrials_visual)), 'MarkerEdgeColor', trl_rjct_color)
+
 
 %% feature: between-channel variance over time (we can sum this later, use sliding windows etc)
 
