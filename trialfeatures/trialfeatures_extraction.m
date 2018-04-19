@@ -58,11 +58,15 @@ ntrl_rjct = length(trls_indx_rjct);
 %calculate variance
 wthn_chan_var = get_wthn_chan_variance(data);
 
-% %plot (channels x trials matrix)
-% mtrc = wthn_chan_var;
-% figure
-% imagesc(log(mtrc))
-% % colormap(cmocean('amp'))
+%plot (channels x trials matrix)
+close all
+figure
+imagesc(log(wthn_chan_var'))
+colorbar
+title('log within-channel variance')
+xlabel('channels')
+ylabel('trials')
+try colormap(cmocean('amp')); catch, colormap('hot'); end
 
 %sum variance over channels
 wthn_chan_var_sum = sum(wthn_chan_var);
@@ -83,11 +87,18 @@ plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_r
 %calculate variance
 btwn_chan_var = get_btwn_chan_variance(data);
 
-% %plot (channels x trials matrix)
-% mtrc = btwn_chan_var;
-% figure
-% imagesc(log(mtrc))
-% % colormap(cmocean('amp'))
+%plot (channels x trials matrix)
+close all
+figure
+imagesc(log(btwn_chan_var'))
+colorbar
+title('log between-channel variance')
+xlabel('time')
+ylabel('trials')
+try colormap(cmocean('amp')); catch, colormap('hot'); end
+
+%average
+btwn_chan_var_avg = mean(btwn_chan_var);
 
 % plot_metric_comparison
 
