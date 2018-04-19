@@ -53,19 +53,10 @@ ntrl_rjct = length(trls_indx_rjct);
 % [hSubplots, hFigure, hTitle] = amprej_multitrialplot(cfg, data, trls_rjct)
 
 
-%% metric: within-channel variance (sum & max across trials)
+%% metric: within-channel variance (sum & max across channels)
 
 %calculate variance
 wthn_chan_var = get_wthn_chan_variance(data);
-
-%sum variance over channels
-wthn_chan_var_sum = sum(wthn_chan_var);
-
-%max variance across trials
-wthn_chan_var_max = max(wthn_chan_var);
-
-
-%% plot within-channel  stuff
 
 % %plot (channels x trials matrix)
 % mtrc = wthn_chan_var;
@@ -73,20 +64,32 @@ wthn_chan_var_max = max(wthn_chan_var);
 % imagesc(log(mtrc))
 % % colormap(cmocean('amp'))
 
-%compare variance sum VS variance max
+%sum variance over channels
+wthn_chan_var_sum = sum(wthn_chan_var);
+
+%max variance across trials
+wthn_chan_var_max = max(wthn_chan_var);
+
+%plot comparison of compare variance sum VS variance max
 mtrc1 = wthn_chan_var_sum;
 mtrc2 = wthn_chan_var_max;
 mtrc1_label = 'var sum';
 mtrc2_label = 'var max';
-plot_wthn_chan_variance_comparison( mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct )
+plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
 
-%% feature: between-channel variance over time (we can sum this later, use sliding windows etc)
+%% metric: between-channel variance ( ... )
 
-trl = cat(3, data.trial{:});
-allvar = squeeze(var(trl,[],1))'; %variance across channels: trials x time matrix
+%calculate variance
+btwn_chan_var = get_btwn_chan_variance(data);
 
-btwnchanvarmax_arr = max(allvar,[],2);
+% %plot (channels x trials matrix)
+% mtrc = btwn_chan_var;
+% figure
+% imagesc(log(mtrc))
+% % colormap(cmocean('amp'))
+
+% plot_metric_comparison
 
 
 %% plot both types of variance
