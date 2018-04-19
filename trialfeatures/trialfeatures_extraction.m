@@ -53,7 +53,7 @@ ntrl_rjct = length(trls_indx_rjct);
 % [hSubplots, hFigure, hTitle] = amprej_multitrialplot(cfg, data, trls_rjct)
 
 
-%% metric: within-channel variance (sum & max across channels)
+%% metric: within-channel variance ( sum & max across channels )
 
 %calculate variance
 wthn_chan_var = get_wthn_chan_variance(data);
@@ -82,7 +82,7 @@ mtrc2_label = 'var max';
 plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
 
-%% metric: between-channel variance ( ... )
+%% metric: between-channel variance ( average & max over time )
 
 %calculate variance
 btwn_chan_var = get_btwn_chan_variance(data);
@@ -97,10 +97,28 @@ xlabel('time')
 ylabel('trials')
 try colormap(cmocean('amp')); catch, colormap('hot'); end
 
-%average
+%average variance over time
 btwn_chan_var_avg = mean(btwn_chan_var);
 
+%max variance across time
+btwn_chan_var_max = max(btwn_chan_var);
+
 % plot_metric_comparison
+mtrc1 = btwn_chan_var_avg;
+mtrc2 = btwn_chan_var_max;
+mtrc1_label = 'var avg';
+mtrc2_label = 'var max';
+plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
+
+
+%% compare within-channel (sum) and between-channel (avg) variance
+
+% plot_metric_comparison
+mtrc1 = wthn_chan_var_sum;
+mtrc2 = btwn_chan_var_avg;
+mtrc1_label = 'within-chan var sum';
+mtrc2_label = 'between-chan var avg';
+plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
 
 %% plot both types of variance
