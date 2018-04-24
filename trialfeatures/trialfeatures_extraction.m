@@ -253,9 +253,24 @@ mtrc2_label = 'wthn-chan kurt';
 plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
 
-%% channel correlations (a noisy channel will correlate less with its neighbours)
+%% channel correlations (trials with artifacts will have higher between-channel correlation)
+%(not sure if a noisy channel will correlate less with its neighbours)
 
 chan_corr = get_chan_correlation(data);
+
+figure
+color_keep = [35,139,69]/255;
+color_rjct = [215,48,31]/255;
+for t = 1:size(chan_corr,2)
+    if trls_keep(t)
+        tmp_color = color_keep;
+    else
+        tmp_color = color_rjct;
+    end
+    hold on
+    plot(chan_corr(:,t), 'color',tmp_color)
+end
+
 mean_chan_corr = mean(chan_corr,1);
 
 %plot (channels x trials matrix)
@@ -268,8 +283,8 @@ xlabel('channels')
 ylabel('trials')
 try colormap(cmocean('amp')); catch, colormap('hot'); end
 
-% plot histogram bars separately for keep and reject trials
 
+% plot histogram bars separately for keep and reject trials
 figure('color','w')
 
 mtrc = mean_chan_corr;
