@@ -1,6 +1,8 @@
 
 %Lorenzo's paths:
 % addpath('~/git-lab/Trial-classification/trialfeatures/')
+%Diana's:
+addpath('/cubric/scratch/c1465333/trial_classification/Trial-classification/trialfeatures');
 
 
 %%
@@ -22,7 +24,7 @@ cd(data_path)
 
 %load raw meg data
 data_filename = [subj_label '_' task_label '.mat'];
-data = load(data_filename)
+data = load(data_filename);
 
 
 %% load trial labels
@@ -148,24 +150,162 @@ mtrc_label = 'between-channel variance max';
 subplot(1,4,4)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
-
-%% plot both types of variance (Diana's)
-
-mtrcA = wthn_chan_var_sum;
-
-figure;
-subplot(2,2,1); plot(1:ntrl_rjct, mtrcA(trls_rjct),'.r',ntrl_rjct+1:ntrl, mtrcA(trls_keep),'.b'); title('Within-channel variance (per trial)')
-subplot(2,2,2); plot(data.time{1},squeeze(median(btwn_chan_var(:,trls_rjct),2)),'r',data.time{1},squeeze(median(btwn_chan_var(:,trls_keep),2)),'b');title('Between-channel variance (median)')
-subplot(2,2,3); plot(data.time{1},btwn_chan_var(:,trls_rjct),'r');title('Between-channel variance (per trial - bad)')
-subplot(2,2,4); plot(data.time{1},btwn_chan_var(:,trls_keep),'b');title('Between-channel variance (per trial - good)')
-
-
 %%                  !!! NOTE !!!
 
 %the following code hasn't been checked by Lorenzo yet
 
+%% %% metric: within-channel kurtosis ( mean & max across channels )
 
-%% feature: z-value modelled after ft_artifact_zvalue
+%calculate variance
+wthn_chan_kurt = get_wthn_chan_kurtosis(data);
+
+%plot (channels x trials matrix)
+close all
+figure
+imagesc(log(wthn_chan_kurt'))
+colorbar
+title('log within-channel kurtosis')
+xlabel('channels')
+ylabel('trials')
+try colormap(cmocean('amp')); catch, colormap('hot'); end
+
+%sum variance over channels
+wthn_chan_kurt_mean = mean(wthn_chan_kurt);
+
+%max variance across trials
+wthn_chan_kurt_max = max(wthn_chan_kurt);
+
+%plot comparison of compare variance sum VS variance max
+mtrc1 = wthn_chan_kurt_mean;
+mtrc2 = wthn_chan_kurt_max;
+mtrc1_label = 'kurt mean';
+mtrc2_label = 'kurt max';
+plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
+
+
+%% metric: between-channel kurtosis ( average & max over time )
+
+%calculate variance
+btwn_chan_kurt = get_btwn_chan_kurtosis(data);
+
+%plot (channels x trials matrix)
+close all
+figure
+imagesc(log(btwn_chan_kurt'))
+colorbar
+title('log between-channel kurtosis')
+xlabel('time')
+ylabel('trials')
+try colormap(cmocean('amp')); catch, colormap('hot'); end
+
+%average variance over time
+btwn_chan_kurt_mean = mean(btwn_chan_kurt);
+
+%max variance across time
+btwn_chan_kurt_max = max(btwn_chan_kurt);
+
+% plot_metric_comparison
+mtrc1 = btwn_chan_kurt_mean;
+mtrc2 = btwn_chan_kurt_max;
+mtrc1_label = 'kurt mean';
+mtrc2_label = 'kurt max';
+plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
+
+%% plot histogram bars separately for keep and reject trials
+
+close all
+
+figure('color','w')
+
+mtrc = wthn_chan_kurt_mean;
+mtrc_label = 'within-channel kurtosis mean';
+subplot(1,4,1)
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+mtrc = wthn_chan_kurt_max;
+mtrc_label = 'within-channel kurtosis max';
+subplot(1,4,2)
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+mtrc = btwn_chan_kurt_mean;
+mtrc_label = 'between-channel kurtosis mean';
+subplot(1,4,3)
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+mtrc = btwn_chan_kurt_max;
+mtrc_label = 'between-channel kurtosis max';
+subplot(1,4,4)
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+%% channel correlations (a noisy channel will correlate less with its neighbours)
+
+chan_corr = get_chan_correlation(data);
+mean_chan_corr = mean(chan_corr,1);
+
+%plot (channels x trials matrix)
+close all
+figure
+imagesc(chan_corr')
+colorbar
+title('channel correlation')
+xlabel('channels')
+ylabel('trials')
+try colormap(cmocean('amp')); catch, colormap('hot'); end
+
+% plot histogram bars separately for keep and reject trials
+
+figure('color','w')
+
+mtrc = mean_chan_corr;
+mtrc_label = 'mean channel correlation';
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+%% metric: Hurst exponent ( average & range across channels )
+
+%calculate variance
+hexp = get_hurst_exponent(data);
+
+%plot (channels x trials matrix)
+close all
+figure
+imagesc(hexp')
+colorbar
+title('Hurst exponent')
+xlabel('channels')
+ylabel('trials')
+try colormap(cmocean('amp')); catch, colormap('hot'); end
+
+%average Hurst exp across channels
+hexp_mean = mean(hexp);
+
+%range of Hurst exp across channels (any deviation whether + or - can indicate noise)
+hexp_range = max(hexp) - min(hexp);
+
+% plot_metric_comparison
+mtrc1 = hexp_mean;
+mtrc2 = hexp_range;
+mtrc1_label = 'Hurst exp mean';
+mtrc2_label = 'Hurst exp range';
+plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
+
+%% plot histogram bars separately for keep and reject trials
+
+close all
+
+figure('color','w')
+
+mtrc = hexp_mean;
+mtrc_label = 'Hurst exponent mean';
+subplot(1,2,1)
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+mtrc = hexp_range;
+mtrc_label = 'Hurst exponent range';
+subplot(1,2,2)
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+%% Do we still need this?
+% feature: z-value modelled after ft_artifact_zvalue
 
 
 cfg = [];
@@ -210,16 +350,5 @@ subplot(3,2,4); plot(data.time{1},zvar(trls_keep,:),'b');title('Var z (per trial
 subplot(3,2,5); plot(data.time{1},zmax(trls_rjct,:),'r');title('Max z-value (per trial - bad)'); ylim([min(zmax(:)) max(zmax(:))])
 subplot(3,2,6); plot(data.time{1},zmax(trls_keep,:),'b');title('Max z-value (per trial - good)'); ylim([min(zmax(:)) max(zmax(:))])
 
-%% feature: kurtosis
-trl = cat(3, data.trial{:});
-kurt = kurtosis(trl,[],2); %kurtosis along time axis
-kurt_sum = squeeze(sum(kurt,1)); %sum it across channels
-kurt_chan = squeeze(kurtosis(trl,[],1)); %kurtosis along channel axis
-kurt_chan_mean = squeeze(mean(kurt,1)); %average it over time
 
-figure;
-subplot(2,2,1); plot(1:num_bad, kurt_sum(trls_rjct),'.r',num_bad+1:100, kurt_sum(trls_keep),'.b'); title('Time kurtosis summed across channels'); 
-subplot(2,2,2); plot(1:num_bad, kurt_chan_mean(trls_rjct),'.r',num_bad+1:100, kurt_chan_mean(trls_keep),'.b'); title('Channel kurtosis averaged across time'); 
-subplot(2,2,3); plot(data.time{1},kurt_chan(:,trls_rjct),'r');title('Channel kurtosis'); ylim([min(kurt_chan(:)) max(kurt_chan(:))])
-subplot(2,2,4); plot(data.time{1},kurt_chan(:,trls_keep),'b');title('Channel kurtosis'); ylim([min(kurt_chan(:)) max(kurt_chan(:))])
 
