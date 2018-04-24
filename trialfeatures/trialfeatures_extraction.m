@@ -298,7 +298,7 @@ plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 hexp = get_hurst_exponent(data);
 
 %plot (channels x trials matrix)
-close all
+% close all
 figure
 imagesc(hexp')
 colorbar
@@ -323,7 +323,7 @@ plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_r
 
 %% plot histogram bars separately for keep and reject trials
 
-close all
+% close all
 
 figure('color','w')
 
@@ -341,16 +341,16 @@ plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 % if using supervised ML - this has to be applied while maintaining
 % train/test independence....
 
-trl_dev = get_trial_deviation(data);
-sum_trl_dev = sum(abs(trl_dev),1); %sum of deviations across channels
-
-% plot histogram bars separately for keep and reject trials
-
-figure('color','w')
-
-mtrc = sum_trl_dev;
-mtrc_label = 'sum trial deviation';
-plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+% trl_dev = get_trial_deviation(data);
+% sum_trl_dev = sum(abs(trl_dev),1); %sum of deviations across channels
+% 
+% % plot histogram bars separately for keep and reject trials
+% 
+% figure('color','w')
+% 
+% mtrc = sum_trl_dev;
+% mtrc_label = 'sum trial deviation';
+% plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
 
 %% Do we still need this?
