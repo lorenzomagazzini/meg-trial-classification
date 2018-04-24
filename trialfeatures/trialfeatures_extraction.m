@@ -16,6 +16,10 @@ cd(base_path)
 subj_label = 's001';
 task_label = 'visuomotor';
 
+%define processing
+do_hp_filt = 0;% 1;
+do_lp_filt = 1;
+
 
 %% load data
 
@@ -26,6 +30,28 @@ cd(data_path)
 data_filename = [subj_label '_' task_label '.mat'];
 data = load(data_filename);
 
+
+%%
+
+if do_hp_filt == 1
+    
+    cfg = [];
+    cfg.bpfilter = 'yes';
+    cfg.bpfreq = [110 140]; %e.g. for muscle artifacts
+%     cfg.bpfiltord = 8;
+    cfg.padding = 0.5*(abs(data.time{1}(end)-data.time{1}(1)))+abs(data.time{1}(end)-data.time{1}(1));
+    data = ft_preprocessing(cfg,data);
+    
+elseif do_lp_filt == 1
+    
+    cfg = [];
+    cfg.lpfilter = 'yes';
+    cfg.lpfreq = 4;
+%     cfg.bpfiltord = 8;
+    cfg.padding = 0.5*(abs(data.time{1}(end)-data.time{1}(1)))+abs(data.time{1}(end)-data.time{1}(1));
+    data = ft_preprocessing(cfg,data);
+    
+end
 
 %% load trial labels
 
@@ -271,7 +297,7 @@ for t = 1:size(chan_corr,2)
     plot(chan_corr(:,t), 'color',tmp_color)
 end
 
-mean_chan_corr = mean(chan_corr,1);
+mean_chan_corr = max(chan_corr);
 
 %plot (channels x trials matrix)
 % close all
@@ -357,47 +383,47 @@ plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 % feature: z-value modelled after ft_artifact_zvalue
 
 
-cfg = [];
-cfg.bpfilter = 'yes';
-cfg.bpfreq = [110 140]; %e.g. for muscle artifacts
-cfg.bpfiltord = 8;
-hf = ft_preprocessing(cfg,data);
-trl = cat(3,hf.trial{:});
-
-sumval = nansum(trl,2); %sum amplitudes across samples
-sumsq = nansum(trl.^2,2); %sum of squares across samples
-datavg = squeeze(sumval./size(trl,2)); %average for all channels
-datstd = squeeze(sqrt(sumsq./size(trl,2) - (sumval./size(trl,2)).^2)); %SD for all channels
-
-%now create z-score data matrix by looping through trials
-zdata = zeros(size(trl));
-for i = 1:size(trl,3)
-    zdata(:,:,i) = (trl(:,:,i) - datavg(:,i*ones(1,size(trl,2))))./datstd(:,i*ones(1,size(trl,2)));
-end;
-
-%get summary metrics of z-scores across channles
-zsum = squeeze(nansum(zdata,1))';
-zmax = squeeze(max(zdata,[],1))';
-%zvar = squeeze(var(zdata,[],1))';
-
-demean = 0; %demean flag - CHANGE ME
-if demean
-    for ii = 1:size(zmax,1)
-        zmax(ii,:) = zmax(ii,:) - mean(zmax(ii,:),2);
-        zsum(ii,:) = zsum(ii,:) - mean(zsum(ii,:),2);
-        %zvar(ii,:) = zvar(ii,:) - mean(zvar(ii,:),2);
-    end;
-end;
-zvar = zsum./sqrt(size(trl,1)); 
-
-%plot z-value metrics
-figure;
-subplot(3,2,1); plot(1:num_bad, var(zvar(trls_rjct,:),[],2),'.r',num_bad+1:100, var(zvar(trls_keep,:),[],2),'.b'); title('Variance of z-value'); 
-subplot(3,2,2); plot(1:num_bad, var(zmax(trls_rjct,:),[],2),'.r',num_bad+1:100, var(zmax(trls_keep,:),[],2),'.b'); title('Maximal z-value')
-subplot(3,2,3); plot(data.time{1},zvar(trls_rjct,:),'r');title('Var z (per trial - bad)'); ylim([min(zvar(:)) max(zvar(:))])
-subplot(3,2,4); plot(data.time{1},zvar(trls_keep,:),'b');title('Var z (per trial - good)'); ylim([min(zvar(:)) max(zvar(:))])
-subplot(3,2,5); plot(data.time{1},zmax(trls_rjct,:),'r');title('Max z-value (per trial - bad)'); ylim([min(zmax(:)) max(zmax(:))])
-subplot(3,2,6); plot(data.time{1},zmax(trls_keep,:),'b');title('Max z-value (per trial - good)'); ylim([min(zmax(:)) max(zmax(:))])
+% cfg = [];
+% cfg.bpfilter = 'yes';
+% cfg.bpfreq = [110 140]; %e.g. for muscle artifacts
+% cfg.bpfiltord = 8;
+% hf = ft_preprocessing(cfg,data);
+% trl = cat(3,hf.trial{:});
+% 
+% sumval = nansum(trl,2); %sum amplitudes across samples
+% sumsq = nansum(trl.^2,2); %sum of squares across samples
+% datavg = squeeze(sumval./size(trl,2)); %average for all channels
+% datstd = squeeze(sqrt(sumsq./size(trl,2) - (sumval./size(trl,2)).^2)); %SD for all channels
+% 
+% %now create z-score data matrix by looping through trials
+% zdata = zeros(size(trl));
+% for i = 1:size(trl,3)
+%     zdata(:,:,i) = (trl(:,:,i) - datavg(:,i*ones(1,size(trl,2))))./datstd(:,i*ones(1,size(trl,2)));
+% end;
+% 
+% %get summary metrics of z-scores across channles
+% zsum = squeeze(nansum(zdata,1))';
+% zmax = squeeze(max(zdata,[],1))';
+% %zvar = squeeze(var(zdata,[],1))';
+% 
+% demean = 0; %demean flag - CHANGE ME
+% if demean
+%     for ii = 1:size(zmax,1)
+%         zmax(ii,:) = zmax(ii,:) - mean(zmax(ii,:),2);
+%         zsum(ii,:) = zsum(ii,:) - mean(zsum(ii,:),2);
+%         %zvar(ii,:) = zvar(ii,:) - mean(zvar(ii,:),2);
+%     end;
+% end;
+% zvar = zsum./sqrt(size(trl,1)); 
+% 
+% %plot z-value metrics
+% figure;
+% subplot(3,2,1); plot(1:num_bad, var(zvar(trls_rjct,:),[],2),'.r',num_bad+1:100, var(zvar(trls_keep,:),[],2),'.b'); title('Variance of z-value'); 
+% subplot(3,2,2); plot(1:num_bad, var(zmax(trls_rjct,:),[],2),'.r',num_bad+1:100, var(zmax(trls_keep,:),[],2),'.b'); title('Maximal z-value')
+% subplot(3,2,3); plot(data.time{1},zvar(trls_rjct,:),'r');title('Var z (per trial - bad)'); ylim([min(zvar(:)) max(zvar(:))])
+% subplot(3,2,4); plot(data.time{1},zvar(trls_keep,:),'b');title('Var z (per trial - good)'); ylim([min(zvar(:)) max(zvar(:))])
+% subplot(3,2,5); plot(data.time{1},zmax(trls_rjct,:),'r');title('Max z-value (per trial - bad)'); ylim([min(zmax(:)) max(zmax(:))])
+% subplot(3,2,6); plot(data.time{1},zmax(trls_keep,:),'b');title('Max z-value (per trial - good)'); ylim([min(zmax(:)) max(zmax(:))])
 
 
 
