@@ -304,6 +304,22 @@ mtrc_label = 'Hurst exponent range';
 subplot(1,2,2)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
+%% deviation of trial from other trials - tentative...
+% if using supervised ML - this has to be applied while maintaining
+% train/test independence....
+
+trl_dev = get_trial_deviation(data);
+sum_trl_dev = sum(abs(trl_dev),1); %sum of deviations across channels
+
+% plot histogram bars separately for keep and reject trials
+
+figure('color','w')
+
+mtrc = sum_trl_dev;
+mtrc_label = 'sum trial deviation';
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+
 %% Do we still need this?
 % feature: z-value modelled after ft_artifact_zvalue
 
