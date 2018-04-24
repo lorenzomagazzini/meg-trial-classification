@@ -2,7 +2,7 @@
 %Lorenzo's paths:
 % addpath('~/git-lab/Trial-classification/trialfeatures/')
 %Diana's:
-addpath('/cubric/scratch/c1465333/trial_classification/Trial-classification/trialfeatures');
+% addpath('/cubric/scratch/c1465333/trial_classification/Trial-classification/trialfeatures');
 
 
 %%
@@ -48,6 +48,7 @@ ntrl_rjct = length(trls_indx_rjct);
 
 ntrl = ntrl_keep+ntrl_rjct;
 
+
 %% plot visually rejected trials
 
 % cfg = [];
@@ -91,7 +92,7 @@ plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_r
 btwn_chan_var = get_btwn_chan_variance(data);
 
 %plot (channels x trials matrix)
-close all
+% close all
 figure
 imagesc(log(btwn_chan_var'))
 colorbar
@@ -126,9 +127,12 @@ plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_r
 
 %% plot histogram bars separately for keep and reject trials
 
-close all
+% close all
 
 figure('color','w')
+hF = gcf;
+hF.Units = 'pixels';
+hF.Position = [0 500 1500 300];
 
 mtrc = wthn_chan_var_sum;
 mtrc_label = 'within-channel variance sum';
@@ -150,9 +154,6 @@ mtrc_label = 'between-channel variance max';
 subplot(1,4,4)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
-%%                  !!! NOTE !!!
-
-%the following code hasn't been checked by Lorenzo yet
 
 %% %% metric: within-channel kurtosis ( mean & max across channels )
 
@@ -160,7 +161,7 @@ plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 wthn_chan_kurt = get_wthn_chan_kurtosis(data);
 
 %plot (channels x trials matrix)
-close all
+% close all
 figure
 imagesc(log(wthn_chan_kurt'))
 colorbar
@@ -189,7 +190,7 @@ plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_r
 btwn_chan_kurt = get_btwn_chan_kurtosis(data);
 
 %plot (channels x trials matrix)
-close all
+% close all
 figure
 imagesc(log(btwn_chan_kurt'))
 colorbar
@@ -211,11 +212,15 @@ mtrc1_label = 'kurt mean';
 mtrc2_label = 'kurt max';
 plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
+
 %% plot histogram bars separately for keep and reject trials
 
-close all
+% close all
 
 figure('color','w')
+hF = gcf;
+hF.Units = 'pixels';
+hF.Position = [0 500 1500 300];
 
 mtrc = wthn_chan_kurt_mean;
 mtrc_label = 'within-channel kurtosis mean';
@@ -237,13 +242,24 @@ mtrc_label = 'between-channel kurtosis max';
 subplot(1,4,4)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
+
+%% compare variance with kurtosis!
+
+% plot_metric_comparison
+mtrc1 = btwn_chan_var_max; %between-channel variance, max across time
+mtrc2 = wthn_chan_kurt_max; %within-channel kurtosis, max across channels
+mtrc1_label = 'btwn-chan var';
+mtrc2_label = 'wthn-chan kurt';
+plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
+
+
 %% channel correlations (a noisy channel will correlate less with its neighbours)
 
 chan_corr = get_chan_correlation(data);
 mean_chan_corr = mean(chan_corr,1);
 
 %plot (channels x trials matrix)
-close all
+% close all
 figure
 imagesc(chan_corr')
 colorbar
@@ -259,6 +275,7 @@ figure('color','w')
 mtrc = mean_chan_corr;
 mtrc_label = 'mean channel correlation';
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
 
 %% metric: Hurst exponent ( average & range across channels )
 
@@ -287,6 +304,7 @@ mtrc2 = hexp_range;
 mtrc1_label = 'Hurst exp mean';
 mtrc2_label = 'Hurst exp range';
 plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
+
 
 %% plot histogram bars separately for keep and reject trials
 
