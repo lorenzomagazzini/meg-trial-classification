@@ -5,7 +5,7 @@
 % addpath('/cubric/scratch/c1465333/trial_classification/Trial-classification/trialfeatures');
 
 
-%%
+%% definitions
 
 clear
 
@@ -16,9 +16,13 @@ cd(base_path)
 subj_label = 's001';
 task_label = 'visuomotor';
 
-%define processing
-do_hp_filt = 0;% 1;
-do_lp_filt = 1;
+%pre-processing (high freq)
+do_bpfilt = 0;% 1;
+bpfilt_freq = [110 140]; %e.g. for muscle artifacts
+
+%pre-processing (low freq)
+do_lpfilt = 0;% 1;
+lpfilt_freq = 4; %e.g, for blinks and eye-movement artifacts
 
 
 %% load data
@@ -31,27 +35,34 @@ data_filename = [subj_label '_' task_label '.mat'];
 data = load(data_filename);
 
 
-%%
+%% preprocess data (if requested)
 
-if do_hp_filt == 1
+if do_bpfilt == 1
     
+    %check settings
+    if do_lpfilt == 1, error('specifying both band-pass and low-pass is not allowed'); end
+    
+    %preprocessing
     cfg = [];
     cfg.bpfilter = 'yes';
-    cfg.bpfreq = [110 140]; %e.g. for muscle artifacts
-%     cfg.bpfiltord = 8;
+    cfg.bpfreq = bpfilt_freq;
     cfg.padding = 0.5*(abs(data.time{1}(end)-data.time{1}(1)))+abs(data.time{1}(end)-data.time{1}(1));
     data = ft_preprocessing(cfg,data);
     
-elseif do_lp_filt == 1
+elseif do_lpfilt == 1
     
+    %check settings
+    if do_bpfilt == 1, error('specifying both low-pass and band-pass is not allowed'); end
+    
+    %preprocessing
     cfg = [];
     cfg.lpfilter = 'yes';
     cfg.lpfreq = 4;
-%     cfg.bpfiltord = 8;
     cfg.padding = 0.5*(abs(data.time{1}(end)-data.time{1}(1)))+abs(data.time{1}(end)-data.time{1}(1));
     data = ft_preprocessing(cfg,data);
     
 end
+
 
 %% load trial labels
 
