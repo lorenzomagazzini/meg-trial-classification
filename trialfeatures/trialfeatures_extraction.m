@@ -68,6 +68,11 @@ end
 
 features = extract_trialfeatures(data)
 
+%save to file
+feature_file = 'features.mat';
+cd('/cubric/collab/meg-cleaning/trialfeatures')
+save(feature_file,'features')
+
 
 %% load trial labels
 
@@ -89,6 +94,12 @@ trls_indx_rjct = find(trls_rjct);
 ntrl_rjct = length(trls_indx_rjct);
 
 ntrl = ntrl_keep+ntrl_rjct;
+
+
+%% visualise
+
+%run script
+visualise_trialfeatures
 
 
 %% plot visually rejected trials
