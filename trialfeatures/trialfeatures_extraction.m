@@ -328,13 +328,13 @@ for t = 1:ntrl
 end
 title('avg chan corr')
 subplot(1,3,2)
-scatter(1:ntrl,chan_corr_mean, 10, color_plot, 'filled')
+scatter(1:ntrl, chan_corr_mean, 10, color_plot, 'filled')
 xlim([1 ntrl])
 ylim([0 1])
 xlabel('trials')
 title('mean avg chan corr')
 subplot(1,3,3)
-scatter(1:ntrl,chan_corr_max, 10, color_plot, 'filled')
+scatter(1:ntrl, chan_corr_max, 10, color_plot, 'filled')
 xlim([1 ntrl])
 ylim([0 1])
 xlabel('trials')
@@ -369,7 +369,69 @@ subplot(1,2,2)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
 
-%%
+%% power (frequency)
+
+%FFT analysis
+cfg = [];
+cfg.method      = 'mtmfft';
+cfg.output      = 'pow';
+cfg.keeptrials  = 'yes';
+cfg.foilim      = [0 data.fsample/2];
+cfg.taper       = 'hanning';
+fftdata = ft_freqanalysis(cfg, data);
+
+%average over channels
+cfg = [];
+cfg.avgoverchan = 'yes';
+fftdata_chanavg = ft_selectdata(cfg, fftdata);
+
+%sum power over all frequencies
+chanavg_powsum = sum(squeeze(fftdata_chanavg.powspctrm)');
+
+%select band-limited power
+cfg = [];
+cfg.avgoverchan = 'yes';
+cfg.frequency = [1 5];
+fftdata_bandlim_chanavg = ft_selectdata(cfg, fftdata);
+
+%sum power over all frequencies
+bandlim_powsum = sum(squeeze(fftdata_bandlim_chanavg.powspctrm)');
+
+%plot
+% close all
+figure('color','w')
+hF = gcf;
+hF.Units = 'pixels';
+hF.Position = [0 500 1200 300];
+subplot(1,3,1)
+color_keep = [35,139,69]/255;
+color_rjct = [215,48,31]/255;
+color_plot = nan(ntrl,3);
+for t = 1:ntrl
+    if trls_keep(t)
+        color_plot(t,:) = color_keep;
+    else
+        color_plot(t,:) = color_rjct;
+    end
+    hold on
+    plot(fftdata_chanavg.freq, squeeze(fftdata_chanavg.powspctrm(t,:,:)), 'color',color_plot(t,:))
+%     plot(fftdata_chanavg.freq, log(squeeze(fftdata_chanavg.powspctrm(t,:,:))), 'color',color_plot(t,:))
+    xlim([0 30])
+    xlabel('frequency')
+    ylabel('power')
+end
+title('chan-avg spectra')
+subplot(1,3,2)
+scatter(1:ntrl, chanavg_powsum, 10, color_plot, 'filled')
+xlim([1 ntrl])
+xlabel('trials')
+title('chan-avg power sum')
+subplot(1,3,3)
+scatter(1:ntrl, bandlim_powsum, 10, color_plot, 'filled')
+xlim([1 ntrl])
+xlabel('trials')
+title('band-lim power sum')
+
 
 
 
