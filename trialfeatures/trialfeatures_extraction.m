@@ -242,7 +242,7 @@ btwn_chan_kurt_mean = mean(btwn_chan_kurt);
 %max variance across time
 btwn_chan_kurt_max = max(btwn_chan_kurt);
 
-% plot_metric_comparison
+%plot_metric_comparison
 mtrc1 = btwn_chan_kurt_mean;
 mtrc2 = btwn_chan_kurt_max;
 mtrc1_label = 'kurt mean';
@@ -282,7 +282,7 @@ plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
 %% compare variance with kurtosis!
 
-% plot_metric_comparison
+%plot_metric_comparison
 mtrc1 = btwn_chan_var_max; %between-channel variance, max across time
 mtrc2 = wthn_chan_kurt_max; %within-channel kurtosis, max across channels
 mtrc1_label = 'btwn-chan var';
@@ -293,22 +293,53 @@ plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_r
 %% channel correlations (trials with artifacts will have higher between-channel correlation)
 %(not sure if a noisy channel will correlate less with its neighbours)
 
+%calculate average correlation (of each channel with all other channels)
 chan_corr = get_chan_correlation(data);
 
-figure
+%calculate average correlation across channels
+chan_corr_mean = mean(chan_corr);
+
+%calculate max correlation across channels
+chan_corr_max = max(chan_corr);
+
+
+%plot
+% close all
+figure('color','w')
+hF = gcf;
+hF.Units = 'pixels';
+hF.Position = [0 500 1200 300];
+subplot(1,3,1)
 color_keep = [35,139,69]/255;
 color_rjct = [215,48,31]/255;
-for t = 1:size(chan_corr,2)
+color_plot = nan(ntrl,3);
+for t = 1:ntrl
     if trls_keep(t)
-        tmp_color = color_keep;
+        color_plot(t,:) = color_keep;
     else
-        tmp_color = color_rjct;
+        color_plot(t,:) = color_rjct;
     end
     hold on
-    plot(chan_corr(:,t), 'color',tmp_color)
+    plot(chan_corr(:,t), 'color',color_plot(t,:))
+    xlim([1 size(chan_corr,1)])
+    ylim([0 1])
+    xlabel('channels')
+    ylabel('avg corr')
 end
+title('avg chan corr')
+subplot(1,3,2)
+scatter(1:ntrl,chan_corr_mean, 10, color_plot, 'filled')
+xlim([1 ntrl])
+ylim([0 1])
+xlabel('trials')
+title('mean avg chan corr')
+subplot(1,3,3)
+scatter(1:ntrl,chan_corr_max, 10, color_plot, 'filled')
+xlim([1 ntrl])
+ylim([0 1])
+xlabel('trials')
+title('max avg chan corr')
 
-mean_chan_corr = max(chan_corr);
 
 %plot (channels x trials matrix)
 % close all
@@ -321,58 +352,68 @@ ylabel('trials')
 try colormap(cmocean('amp')); catch, colormap('hot'); end
 
 
-% plot histogram bars separately for keep and reject trials
+%plot histogram bars separately for keep and reject trials
 figure('color','w')
+hF = gcf;
+hF.Units = 'pixels';
+hF.Position = [0 500 900 300];
 
-mtrc = mean_chan_corr;
+mtrc = chan_corr_mean;
 mtrc_label = 'mean channel correlation';
+subplot(1,2,1)
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+mtrc = chan_corr_max;
+mtrc_label = 'max channel correlation';
+subplot(1,2,2)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
 
 %% metric: Hurst exponent ( average & range across channels )
 
-%calculate variance
-hexp = get_hurst_exponent(data);
-
-%plot (channels x trials matrix)
-% close all
-figure
-imagesc(hexp')
-colorbar
-title('Hurst exponent')
-xlabel('channels')
-ylabel('trials')
-try colormap(cmocean('amp')); catch, colormap('hot'); end
-
-%average Hurst exp across channels
-hexp_mean = mean(hexp);
-
-%range of Hurst exp across channels (any deviation whether + or - can indicate noise)
-hexp_range = max(hexp) - min(hexp);
-
-% plot_metric_comparison
-mtrc1 = hexp_mean;
-mtrc2 = hexp_range;
-mtrc1_label = 'Hurst exp mean';
-mtrc2_label = 'Hurst exp range';
-plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
+% %calculate variance
+% hexp = get_hurst_exponent(data);
+% 
+% %plot (channels x trials matrix)
+% % close all
+% figure
+% imagesc(hexp')
+% colorbar
+% title('Hurst exponent')
+% xlabel('channels')
+% ylabel('trials')
+% try colormap(cmocean('amp')); catch, colormap('hot'); end
+% 
+% %average Hurst exp across channels
+% hexp_mean = mean(hexp);
+% 
+% %range of Hurst exp across channels (any deviation whether + or - can indicate noise)
+% hexp_range = max(hexp) - min(hexp);
+% 
+% % plot_metric_comparison
+% mtrc1 = hexp_mean;
+% mtrc2 = hexp_range;
+% mtrc1_label = 'Hurst exp mean';
+% mtrc2_label = 'Hurst exp range';
+% plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
 
 %% plot histogram bars separately for keep and reject trials
 
-% close all
+% % close all
+% 
+% figure('color','w')
+% 
+% mtrc = hexp_mean;
+% mtrc_label = 'Hurst exponent mean';
+% subplot(1,2,1)
+% plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+% 
+% mtrc = hexp_range;
+% mtrc_label = 'Hurst exponent range';
+% subplot(1,2,2)
+% plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
-figure('color','w')
-
-mtrc = hexp_mean;
-mtrc_label = 'Hurst exponent mean';
-subplot(1,2,1)
-plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
-
-mtrc = hexp_range;
-mtrc_label = 'Hurst exponent range';
-subplot(1,2,2)
-plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
 %% deviation of trial from other trials - tentative...
 % if using supervised ML - this has to be applied while maintaining
