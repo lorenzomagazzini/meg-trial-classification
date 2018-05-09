@@ -90,7 +90,7 @@ features = extract_trialfeatures(data)
 %save to file
 feature_file = 'features.mat';
 cd('/cubric/collab/meg-cleaning/trialfeatures')
-save(feature_file,'features')
+save(feature_file, '-v7.3', '-struct', 'features')
 
 
 %% load trial labels
@@ -136,6 +136,7 @@ ntrl = ntrl_keep+ntrl_rjct;
 %% visualise
 
 %run script
+cd('/cubric/collab/meg-cleaning/trialfeatures')
 visualise_trialfeatures
 
 
