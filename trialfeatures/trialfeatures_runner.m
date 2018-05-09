@@ -12,21 +12,32 @@ clear
 base_path = '/cubric/collab/meg-cleaning/';
 cd(base_path)
 
+%list of participants
+subj_list = {'s001' 's002' 's003'};
+nsubj = length(subj_list);
+
 %define subj and task
-subj_label = 's001';
+% subj_label = 's001';
 task_label = 'visuomotor';
 
 %pre-processing (high freq)
-do_bpfilt = 0;% 1;
+do_bpfilt = 0;% 1;% 
 bpfilt_freq = [110 140]; %e.g. for muscle artifacts
 
 %pre-processing (low freq)
-do_lpfilt = 0;% 1;
+do_lpfilt = 0;% 1;% 
 lpfilt_freq = 4; %e.g, for blinks and eye-movement artifacts
 
+%prepare cell array for storing subject data structures
+data_arr = cell(1,nsubj);
 
-%% load data
+%loop over subjects
+for s = 1:nsubj
 
+%define subj from list
+subj_label = subj_list{s};
+
+%load data
 data_path = fullfile(base_path,'rawdata');
 cd(data_path)
 
@@ -34,9 +45,7 @@ cd(data_path)
 data_filename = [subj_label '_' task_label '.mat'];
 data = load(data_filename);
 
-
-%% preprocess data (if requested)
-
+%preprocess data (if requested)
 if do_bpfilt == 1
     
     %check settings
@@ -63,6 +72,16 @@ elseif do_lpfilt == 1
     
 end
 
+%add data to cell array
+data_arr{s} = data;
+clear data
+
+end
+
+%create new data structure by appending subjects
+cfg = [];
+data = ft_appenddata(cfg, data_arr{:})
+
 
 %% extract trial features
 
@@ -71,10 +90,19 @@ features = extract_trialfeatures(data)
 %save to file
 feature_file = 'features.mat';
 cd('/cubric/collab/meg-cleaning/trialfeatures')
-save(feature_file,'features')
+save(feature_file, '-v7.3', '-struct', 'features')
 
 
 %% load trial labels
+
+%prepare for lazy concatenation
+rejTrials_visual_arr = [];
+
+%loop over subjects
+for s = 1:nsubj
+
+%define subj from list
+subj_label = subj_list{s};
 
 datalabel_path = fullfile(base_path,'trialrej');
 cd(datalabel_path)
@@ -82,6 +110,16 @@ cd(datalabel_path)
 %load rejTrialsIndex_visual & rejTrials_visual
 datalabel_filename = [subj_label '_' task_label '_rejTrials_visual.mat'];
 load(datalabel_filename)
+
+%concatenate
+rejTrials_visual_arr = [rejTrials_visual_arr; rejTrials_visual];
+
+end
+
+%rename and clear
+rejTrials_visual = logical(rejTrials_visual_arr);
+clear rejTrials_visual_arr
+clear rejTrialsIndex_visual
 
 %trials to keep
 trls_keep = ~rejTrials_visual;
@@ -98,8 +136,19 @@ ntrl = ntrl_keep+ntrl_rjct;
 
 %% visualise
 
-%run script
-visualise_trialfeatures
+% %run script
+% cd('/cubric/collab/meg-cleaning/trialfeatures')
+% visualise_trialfeatures
+
+
+%% plot features pairwise
+
+%note: features is a structure with multiple fields, but only fields of
+%1xNTrial size are used for plotting
+
+cd('/cubric/collab/meg-cleaning/trialfeatures')
+features = load(feature_file);
+plot_featurepairs(features, ntrl, trls_keep, trls_rjct)
 
 
 %% plot visually rejected trials
