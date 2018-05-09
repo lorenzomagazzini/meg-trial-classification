@@ -21,11 +21,11 @@ nsubj = length(subj_list);
 task_label = 'visuomotor';
 
 %pre-processing (high freq)
-do_bpfilt = 0;% 1;
+do_bpfilt = 0;% 1;% 
 bpfilt_freq = [110 140]; %e.g. for muscle artifacts
 
 %pre-processing (low freq)
-do_lpfilt = 0;% 1;
+do_lpfilt = 1;% 0;% 
 lpfilt_freq = 4; %e.g, for blinks and eye-movement artifacts
 
 %prepare cell array for storing subject data structures
