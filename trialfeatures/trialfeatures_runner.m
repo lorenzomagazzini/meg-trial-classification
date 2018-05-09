@@ -25,7 +25,7 @@ do_bpfilt = 0;% 1;%
 bpfilt_freq = [110 140]; %e.g. for muscle artifacts
 
 %pre-processing (low freq)
-do_lpfilt = 1;% 0;% 
+do_lpfilt = 0;% 1;% 
 lpfilt_freq = 4; %e.g, for blinks and eye-movement artifacts
 
 %prepare cell array for storing subject data structures
@@ -136,9 +136,19 @@ ntrl = ntrl_keep+ntrl_rjct;
 
 %% visualise
 
-%run script
+% %run script
+% cd('/cubric/collab/meg-cleaning/trialfeatures')
+% visualise_trialfeatures
+
+
+%% plot features pairwise
+
+%note: features is a structure with multiple fields, but only fields of
+%1xNTrial size are used for plotting
+
 cd('/cubric/collab/meg-cleaning/trialfeatures')
-visualise_trialfeatures
+features = load(feature_file);
+plot_featurepairs(features, ntrl, trls_keep, trls_rjct)
 
 
 %% plot visually rejected trials
