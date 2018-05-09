@@ -95,12 +95,30 @@ save(feature_file,'features')
 
 %% load trial labels
 
+%prepare for lazy concatenation
+rejTrials_visual_arr = [];
+
+%loop over subjects
+for s = 1:nsubj
+
+%define subj from list
+subj_label = subj_list{s};
+
 datalabel_path = fullfile(base_path,'trialrej');
 cd(datalabel_path)
 
 %load rejTrialsIndex_visual & rejTrials_visual
 datalabel_filename = [subj_label '_' task_label '_rejTrials_visual.mat'];
 load(datalabel_filename)
+
+%concatenate
+rejTrials_visual_arr = [rejTrials_visual_arr; rejTrials_visual];
+
+end
+
+%rename and clear
+rejTrials_visual = rejTrials_visual_arr;
+clear rejTrials_visual_arr
 
 %trials to keep
 trls_keep = ~rejTrials_visual;
