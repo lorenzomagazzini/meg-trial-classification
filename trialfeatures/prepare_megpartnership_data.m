@@ -47,7 +47,7 @@ nsubj = length(subj_list);
 
 %definitions for filtering/plotting
 hp_freq = 100;
-lp_freq = 5;
+lp_freq = 4;
 
 %every other subject, starting from first subj (training data)
 for s = 1:2:nsubj
@@ -103,6 +103,8 @@ for s = 1:2:nsubj
     cfg.title = 'Visually rejected trials';
     cfg.drawnow = 'no';
     [~, hFigure1] = amprej_multitrialplot(cfg, data, badtrialsboolean);
+    drawnow
+    pause(1)
     
     %save figure to temporary path
     fig_savename = ['sub-' id '_cls-bethvisual_broadband.png'];
@@ -121,6 +123,8 @@ for s = 1:2:nsubj
     cfg.title = ['Visually rejected trials (high-pass ' num2str(hp_freq) ' Hz)'];
     cfg.drawnow = 'no';
     [~, hFigure2] = amprej_multitrialplot(cfg, data_hp, badtrialsboolean);
+    drawnow
+    pause(1)
     
     %save figure to temporary path
     fig_savename = ['sub-' id '_cls-bethvisual_hp-' num2str(hp_freq) 'Hz.png'];
@@ -139,6 +143,8 @@ for s = 1:2:nsubj
     cfg.title = ['Visually rejected trials (low-pass ' num2str(lp_freq) ' Hz)'];
     cfg.drawnow = 'no';
     [~, hFigure3] = amprej_multitrialplot(cfg, data_lp, badtrialsboolean);
+    drawnow
+    pause(1)
     
     %save figure to temporary path
     fig_savename = ['sub-' id '_cls-bethvisual_lp-' num2str(lp_freq) 'Hz.png'];
@@ -146,3 +152,9 @@ for s = 1:2:nsubj
     
     
 end
+
+%to-do: copy data from  scratch to collab
+
+
+
+
