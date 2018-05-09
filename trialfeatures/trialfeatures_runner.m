@@ -12,8 +12,12 @@ clear
 base_path = '/cubric/collab/meg-cleaning/';
 cd(base_path)
 
+%list of participants
+subj_list = {'s001' 's002' 's003'};
+nsubj = length(subj_list);
+
 %define subj and task
-subj_label = 's001';
+% subj_label = 's001';
 task_label = 'visuomotor';
 
 %pre-processing (high freq)
@@ -24,9 +28,16 @@ bpfilt_freq = [110 140]; %e.g. for muscle artifacts
 do_lpfilt = 0;% 1;
 lpfilt_freq = 4; %e.g, for blinks and eye-movement artifacts
 
+%prepare cell array for storing subject data structures
+data_arr = cell(1,nsubj);
 
-%% load data
+%loop over subjects
+for s = 1:nsubj
 
+%define subj from list
+subj_label = subj_list{s};
+
+%load data
 data_path = fullfile(base_path,'rawdata');
 cd(data_path)
 
@@ -34,9 +45,7 @@ cd(data_path)
 data_filename = [subj_label '_' task_label '.mat'];
 data = load(data_filename);
 
-
-%% preprocess data (if requested)
-
+%preprocess data (if requested)
 if do_bpfilt == 1
     
     %check settings
@@ -62,6 +71,16 @@ elseif do_lpfilt == 1
     data = ft_preprocessing(cfg,data);
     
 end
+
+%add data to cell array
+data_arr{s} = data;
+clear data
+
+end
+
+%create new data structure by appending subjects
+cfg = [];
+data = ft_appenddata(cfg, data_arr{:})
 
 
 %% extract trial features
