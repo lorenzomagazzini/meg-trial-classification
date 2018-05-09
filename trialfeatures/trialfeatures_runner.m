@@ -117,8 +117,9 @@ rejTrials_visual_arr = [rejTrials_visual_arr; rejTrials_visual];
 end
 
 %rename and clear
-rejTrials_visual = rejTrials_visual_arr;
+rejTrials_visual = logical(rejTrials_visual_arr);
 clear rejTrials_visual_arr
+clear rejTrialsIndex_visual
 
 %trials to keep
 trls_keep = ~rejTrials_visual;
