@@ -1,6 +1,8 @@
 
 %Lorenzo's paths:
 % addpath('~/git-lab/Trial-classification/trialfeatures/')
+% addpath('/home/c1356674/git-lab/ampreject/functions')
+
 %Diana's:
 % addpath('/cubric/scratch/c1465333/trial_classification/Trial-classification/trialfeatures');
 
