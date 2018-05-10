@@ -153,8 +153,11 @@ for s = 1:2:nsubj
     
 end
 
-%to-do: copy data from  scratch to collab
+%copy data from  scratch to collab
+unix(['cp -v ' fullfile(temp_savepath, 'sub-*.mat') ' ' data_savepath])
+unix(['cp -v ' fullfile(temp_savepath, 'sub-*.png') ' ' fig_savepath])
 
-
+%remove data from scratch
+unix(['rm -rv ' temp_savepath])
 
 
