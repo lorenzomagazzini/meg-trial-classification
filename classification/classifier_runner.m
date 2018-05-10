@@ -4,12 +4,14 @@
 %Diana's:
 addpath(genpath('/cubric/scratch/c1465333/trial_classification/Trial-classification/'));
 
-output_path = '/cubric/collab/meg-cleaning/classification/';
+%output_path = '/cubric/collab/meg-cleaning/classification/';
+output_path = '/cubric/collab/meg-cleaning/classification/output_btwn_chan_feat/';
 feature_path = '/cubric/collab/meg-cleaning/classification/features/';
 base_path = '/cubric/collab/meg-cleaning/';
 
 subj_labels = {'s001', 's002', 's003'};
 datafiles = {'features.mat', 'features_lp.mat', 'features_hp.mat'};
+feature_set = input('Choose feature set to use: max, within, between, within-between: ', 's');
 
 %% read in features and labels for each subject
 all_data = cell(1,3);
@@ -20,7 +22,7 @@ for s = 1:3
     
     for f = 1:3
         
-        [data,labels] = get_svm_data([feature_path subj_labels{s} '_' datafiles{f}], [base_path 'trialrej/' subj_labels{s} '_visuomotor_rejTrials_visual.mat']);
+        [data,labels] = get_svm_data([feature_path subj_labels{s} '_' datafiles{f}], [base_path 'trialrej/' subj_labels{s} '_visuomotor_rejTrials_visual.mat'], feature_set);
         all_feat = [all_feat data];
         
     end;
@@ -56,19 +58,26 @@ end;
 save([output_path 'results_cross_subj_allfeat.mat'],'results');
 
 %% (3) separate classification on each feature set
+if strcmp(feature_set, 'max')
+    setsize = 5;
+elseif strcmp(feature_set, 'within')
+    setsize = 272;
+elseif strcmp(feature_set, 'between')
+    setsize = 1201;
+end;
 
 results = cell(1,3);
 data_kfold = cat(1,all_data{:});
 labels_kfold = cat(1,all_labels{:});
-feat_idx = [1:5:15]; %doing this manually for now
+feat_idx = 1:setsize:size(data_kfold,2); %doing this manually for now
 
 for f = 1:3
     
-    data = data_kfold(:,feat_idx(f):feat_idx(f)+4);
+    data = data_kfold(:,feat_idx(f):feat_idx(f)+setsize-1);
     results{f} = svm_decode_kfold(data,labels_kfold,'weights',true);
-    save([output_path 'results_5foldcv_feat_sets.mat'],'results');
-    
 end;
+
+save([output_path 'results_5foldcv_feat_sets.mat'],'results');
 
 %% (4) cross-participant
 
@@ -83,8 +92,8 @@ for fold = 1:3
     
     for f = 1:3
         
-        traindata = traindata_all(:,feat_idx(f):feat_idx(f)+4);
-        testdata = testdata_all(:,feat_idx(f):feat_idx(f)+4);
+        traindata = traindata_all(:,feat_idx(f):feat_idx(f)+setsize-1);
+        testdata = testdata_all(:,feat_idx(f):feat_idx(f)+setsize-1);
         
         results{fold,f} = svm_decode_holdout(traindata, trainlabels, testdata, testlabels, 'weights', true);
         
@@ -96,14 +105,14 @@ save([output_path 'results_cross_subj_feat_sets.mat'],'results');
 
 %% (5) RFE on full dataset
 
-data_kfold = cat(1,all_data{:});
-labels_kfold = cat(1,all_labels{:});
-
-[num_feat, Fscores] = RFE_CV(data_kfold,labels_kfold,'kfold',5);
-num_features = mode(num_feat);
-[data_RFE, idx_RFE] = RFE(data_kfold, labels_kfold, num_features);
-
-% check what performance we get after this - although note that we should use separate sets for feature selection & testing
-results = svm_decode_kfold(data_RFE,labels_kfold,'weights',true); %this is not better!
-
-save([output_path 'RFE_results.mat'],'data_RFE','idx_RFE','results','num_features','num_feat');
+% data_kfold = cat(1,all_data{:});
+% labels_kfold = cat(1,all_labels{:});
+% 
+% [num_feat, Fscores] = RFE_CV(data_kfold,labels_kfold,'kfold',5);
+% num_features = mode(num_feat);
+% [data_RFE, idx_RFE] = RFE(data_kfold, labels_kfold, num_features);
+% 
+% % check what performance we get after this - although note that we should use separate sets for feature selection & testing
+% results = svm_decode_kfold(data_RFE,labels_kfold,'weights',true); %this is not better!
+% 
+% save([output_path 'RFE_results.mat'],'data_RFE','idx_RFE','results','num_features','num_feat');
