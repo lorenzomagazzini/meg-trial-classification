@@ -55,6 +55,7 @@ if numel(results.Confusion)>1
     results.Fscore1 = (2*PP*results.Sensitivity)/(PP+results.Sensitivity);
     results.Fscore2 = (2*NP*results.Specificity)/(NP+results.Specificity);
     results.WeightedFscore = ((sum(results.Confusion(:,1))/sum(results.Confusion(:)))*results.Fscore1) + ((sum(results.Confusion(:,2))/sum(results.Confusion(:)))*results.Fscore2);
+    results.Label = svm_model.Label; %save class order
 end;
 
 %calculate weights and compute activation patterns as per Haufe (2014)

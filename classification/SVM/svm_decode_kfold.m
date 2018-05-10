@@ -65,7 +65,7 @@ for icv = 1: svm_par.iterate_cv
     results.Fscore1(icv) = (2*PP*results.Sensitivity(icv))/(PP+results.Sensitivity(icv));
     results.Fscore2(icv) = (2*NP*results.Specificity(icv))/(NP+results.Specificity(icv));
     results.WeightedFscore(icv) = ((sum(results.Confusion{icv}(:,1))/sum(results.Confusion{icv}(:)))*results.Fscore1(icv)) + ((sum(results.Confusion{icv}(:,2))/sum(results.Confusion{icv}(:)))*results.Fscore2(icv));
-
+    results.Label = svm_model.Label; %save class order
 end;
 
 %calculate weights and compute activation patterns as per Haufe (2014)
