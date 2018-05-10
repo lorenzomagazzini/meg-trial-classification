@@ -49,10 +49,10 @@ for p = 1:np
     drawnow
     
     if ismember(p,1:nf+1:np)
-        ylabel(mtrc2_label);
+        ylabel({mtrc1_label(1:round(length(mtrc1_label)/2)) mtrc1_label(round(length(mtrc1_label)/2)+1:end)});% ylabel(mtrc1_label);
     end
     if ismember(p,np-nf:np)
-        xlabel(mtrc1_label)
+        xlabel({mtrc2_label(1:round(length(mtrc2_label)/2)) mtrc2_label(round(length(mtrc2_label)/2)+1:end)});% xlabel(mtrc2_label)
     end
     
 end
