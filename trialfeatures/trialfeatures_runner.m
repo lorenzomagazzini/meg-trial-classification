@@ -83,16 +83,6 @@ cfg = [];
 data = ft_appenddata(cfg, data_arr{:})
 
 
-%% extract trial features
-
-features = extract_trialfeatures(data)
-
-%save to file
-feature_file = 'features.mat';
-cd('/cubric/collab/meg-cleaning/trialfeatures')
-save(feature_file, '-v7.3', '-struct', 'features')
-
-
 %% load trial labels
 
 %prepare for lazy concatenation
@@ -134,6 +124,27 @@ ntrl_rjct = length(trls_indx_rjct);
 ntrl = ntrl_keep+ntrl_rjct;
 
 
+%rejected trials re-visited
+trls_indx_rjct = [6 7 18 28 56 63 65 70 84 89 90 93 99 110 112 115 116 120 129 130 138 147 157 190 197  249 264];
+trls_rjct = logical(zeros(size(rejTrials_visual)));
+trls_rjct(trls_indx_rjct) = 1;
+trls_keep = ~trls_rjct;
+trls_indx_keep = find(trls_keep);
+ntrl_keep = length(trls_indx_keep);
+ntrl_rjct = length(trls_indx_rjct);
+ntrl = ntrl_keep+ntrl_rjct;
+
+
+%% extract trial features
+
+% features = extract_trialfeatures(data)
+% 
+% %save to file
+% feature_file = 'features.mat';
+% cd('/cubric/collab/meg-cleaning/trialfeatures')
+% save(feature_file, '-v7.3', '-struct', 'features')
+
+
 %% visualise
 
 % %run script
@@ -149,6 +160,7 @@ ntrl = ntrl_keep+ntrl_rjct;
 cd('/cubric/collab/meg-cleaning/trialfeatures')
 features = load(feature_file);
 plot_featurepairs(features, ntrl, trls_keep, trls_rjct)
+set(get(gcf,'children'),'FontSize',6)
 
 
 %% plot visually rejected trials
