@@ -30,8 +30,8 @@ nsubj = length(file_list);
 %% preprocessing
 
 %pre-processing (high freq) e.g. for muscle artifacts
-do_bpfilt = 0;% 1;% 
-bpfilt_freq = [110 140];
+do_hpfilt = 0;% 1;% 
+hpfilt_freq = 90;% [110 140];
 
 %pre-processing (low freq) e.g, for blinks and eye-movement artifacts
 do_lpfilt = 0;% 1;% 
@@ -51,22 +51,22 @@ cd(data_path)
 data = load(file_list{s});
 
 %preprocess data (if requested)
-if do_bpfilt == 1
+if do_hpfilt == 1
     
     %check settings
     if do_lpfilt == 1, error('specifying both band-pass and low-pass is not allowed'); end
     
     %preprocessing
     cfg = [];
-    cfg.bpfilter = 'yes';
-    cfg.bpfreq = bpfilt_freq;
+    cfg.hpfilter = 'yes';
+    cfg.hpfreq = hpfilt_freq;
     cfg.padding = 0.5*(abs(data.time{1}(end)-data.time{1}(1)))+abs(data.time{1}(end)-data.time{1}(1));
     data = ft_preprocessing(cfg,data);
     
 elseif do_lpfilt == 1
     
     %check settings
-    if do_bpfilt == 1, error('specifying both low-pass and band-pass is not allowed'); end
+    if do_hpfilt == 1, error('specifying both low-pass and band-pass is not allowed'); end
     
     %preprocessing
     cfg = [];
@@ -130,17 +130,21 @@ data = ft_appenddata(cfg, data_arr{:})
 % ntrl_rjct = length(trls_indx_rjct);
 % 
 % ntrl = ntrl_keep+ntrl_rjct;
-% 
-% 
-% %rejected trials re-visited
+
+
+%visually marked trials for sub-cdf004 restopen (broadband + lowpass + highpass)
+trls_indx_rjct = [1 2 8 13 23 29 30 37 44 48 52 53 57 59 61 62 66 68 69 75 79 82 87 88 89 91 94 96 99 100 103 105 106 108 110 112 113 115 116 117 122 125 127 128 131 132 133 136 137 139 140 145 148 150];
+
+%rejected trials re-visited
 % trls_indx_rjct = [6 7 18 28 56 63 65 70 84 89 90 93 99 110 112 115 116 120 129 130 138 147 157 190 197  249 264];
 % trls_rjct = logical(zeros(size(rejTrials_visual)));
-% trls_rjct(trls_indx_rjct) = 1;
-% trls_keep = ~trls_rjct;
-% trls_indx_keep = find(trls_keep);
-% ntrl_keep = length(trls_indx_keep);
-% ntrl_rjct = length(trls_indx_rjct);
-% ntrl = ntrl_keep+ntrl_rjct;
+trls_rjct = logical(zeros(1,length(data.trial)));
+trls_rjct(trls_indx_rjct) = 1;
+trls_keep = ~trls_rjct;
+trls_indx_keep = find(trls_keep);
+ntrl_keep = length(trls_indx_keep);
+ntrl_rjct = length(trls_indx_rjct);
+ntrl = ntrl_keep+ntrl_rjct;
 
 
 %% extract trial features
@@ -174,7 +178,8 @@ set(get(gcf,'children'),'FontSize',6)
 %% plot visually rejected trials
 
 % cfg = [];
-% cfg.yLim = [-1 1]*5e-12;
+% % cfg.yLim = [-1 1]*5e-12;
+% cfg.yLim = [-1 1]*2e-12;
 % cfg.title = 'Visually rejected trials';
 % [hSubplots, hFigure, hTitle] = amprej_multitrialplot(cfg, data, trls_rjct)
 
