@@ -1,17 +1,18 @@
 %% paths and definitions
+
 %Lorenzo's paths:
 % addpath(genpath('~/git-lab/Trial-classification/'))
 %Diana's:
 addpath(genpath('/cubric/scratch/c1465333/trial_classification/Trial-classification/'));
 
 %output_path = '/cubric/collab/meg-cleaning/classification/';
-output_path = '/cubric/collab/meg-cleaning/classification/output_btwn_chan_feat/';
 feature_path = '/cubric/collab/meg-cleaning/classification/features/';
 base_path = '/cubric/collab/meg-cleaning/';
 
 subj_labels = {'s001', 's002', 's003'};
 datafiles = {'features.mat', 'features_lp.mat', 'features_hp.mat'};
-feature_set = input('Choose feature set to use: max, within, between, within-between: ', 's');
+feature_set = input('Choose feature set to use: max, within, between, within-between, single-value: ', 's');
+output_path = [base_path 'classification/output/' feature_set '/'];
 
 %% read in features and labels for each subject
 all_data = cell(1,3);
@@ -58,12 +59,17 @@ end;
 save([output_path 'results_cross_subj_allfeat.mat'],'results');
 
 %% (3) separate classification on each feature set
-if strcmp(feature_set, 'max')
-    setsize = 5;
-elseif strcmp(feature_set, 'within')
-    setsize = 272;
-elseif strcmp(feature_set, 'between')
-    setsize = 1201;
+switch feature_set
+    case 'max'
+        setsize = 5;
+    case 'within'
+        setsize = 272*3;
+    case 'between' 
+        setsize = 1201*2;
+    case 'within-between'
+        setsize = 272*3+1201*2;
+    case 'single-value'
+        setsize = 8;
 end;
 
 results = cell(1,3);
@@ -104,6 +110,7 @@ end
 save([output_path 'results_cross_subj_feat_sets.mat'],'results');
 
 %% (5) RFE on full dataset
+% this would take a while with thousands of features
 
 % data_kfold = cat(1,all_data{:});
 % labels_kfold = cat(1,all_labels{:});
