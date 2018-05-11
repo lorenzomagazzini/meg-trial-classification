@@ -11,41 +11,44 @@
 
 clear
 
+%path to collab
 base_path = '/cubric/collab/meg-cleaning/';
 cd(base_path)
 
-%list of participants
-subj_list = {'s001' 's002' 's003'};
-nsubj = length(subj_list);
+%task
+task_label = 'restopen';
 
-%define subj and task
-% subj_label = 's001';
-task_label = 'visuomotor';
+%path to data (.mat files)
+data_path = fullfile(base_path, 'megpartnership', task_label, 'traindata');
 
-%pre-processing (high freq)
+%list of files
+dir_struct = dir(fullfile(data_path, 'sub-*_data.mat'));
+file_list = {dir_struct(:).name}';
+nsubj = length(file_list);
+
+
+%% preprocessing
+
+%pre-processing (high freq) e.g. for muscle artifacts
 do_bpfilt = 0;% 1;% 
-bpfilt_freq = [110 140]; %e.g. for muscle artifacts
+bpfilt_freq = [110 140];
 
-%pre-processing (low freq)
+%pre-processing (low freq) e.g, for blinks and eye-movement artifacts
 do_lpfilt = 0;% 1;% 
-lpfilt_freq = 4; %e.g, for blinks and eye-movement artifacts
+lpfilt_freq = 4;
 
 %prepare cell array for storing subject data structures
 data_arr = cell(1,nsubj);
 
 %loop over subjects
-for s = 1:nsubj
+for s = 1% :nsubj
 
 %define subj from list
-subj_label = subj_list{s};
+subj_label = strrep(file_list{s}, '_data.mat', '');
 
 %load data
-data_path = fullfile(base_path,'rawdata');
 cd(data_path)
-
-%load raw meg data
-data_filename = [subj_label '_' task_label '.mat'];
-data = load(data_filename);
+data = load(file_list{s});
 
 %preprocess data (if requested)
 if do_bpfilt == 1
@@ -80,6 +83,9 @@ clear data
 
 end
 
+%remove empty cells
+data_arr(cellfun(@isempty,data_arr)) = [];
+
 %create new data structure by appending subjects
 cfg = [];
 data = ft_appenddata(cfg, data_arr{:})
@@ -87,54 +93,54 @@ data = ft_appenddata(cfg, data_arr{:})
 
 %% load trial labels
 
-%prepare for lazy concatenation
-rejTrials_visual_arr = [];
-
-%loop over subjects
-for s = 1:nsubj
-
-%define subj from list
-subj_label = subj_list{s};
-
-datalabel_path = fullfile(base_path,'trialrej');
-cd(datalabel_path)
-
-%load rejTrialsIndex_visual & rejTrials_visual
-datalabel_filename = [subj_label '_' task_label '_rejTrials_visual.mat'];
-load(datalabel_filename)
-
-%concatenate
-rejTrials_visual_arr = [rejTrials_visual_arr; rejTrials_visual];
-
-end
-
-%rename and clear
-rejTrials_visual = logical(rejTrials_visual_arr);
-clear rejTrials_visual_arr
-clear rejTrialsIndex_visual
-
-%trials to keep
-trls_keep = ~rejTrials_visual;
-trls_indx_keep = find(trls_keep);
-ntrl_keep = length(trls_indx_keep);
-
-%trials to reject
-trls_rjct = rejTrials_visual;
-trls_indx_rjct = find(trls_rjct);
-ntrl_rjct = length(trls_indx_rjct);
-
-ntrl = ntrl_keep+ntrl_rjct;
-
-
-%rejected trials re-visited
-trls_indx_rjct = [6 7 18 28 56 63 65 70 84 89 90 93 99 110 112 115 116 120 129 130 138 147 157 190 197  249 264];
-trls_rjct = logical(zeros(size(rejTrials_visual)));
-trls_rjct(trls_indx_rjct) = 1;
-trls_keep = ~trls_rjct;
-trls_indx_keep = find(trls_keep);
-ntrl_keep = length(trls_indx_keep);
-ntrl_rjct = length(trls_indx_rjct);
-ntrl = ntrl_keep+ntrl_rjct;
+% %prepare for lazy concatenation
+% rejTrials_visual_arr = [];
+% 
+% %loop over subjects
+% for s = 1:nsubj
+% 
+% %define subj from list
+% subj_label = file_list{s};
+% 
+% datalabel_path = fullfile(base_path,'trialrej');
+% cd(datalabel_path)
+% 
+% %load rejTrialsIndex_visual & rejTrials_visual
+% datalabel_filename = [subj_label '_' task_label '_rejTrials_visual.mat'];
+% load(datalabel_filename)
+% 
+% %concatenate
+% rejTrials_visual_arr = [rejTrials_visual_arr; rejTrials_visual];
+% 
+% end
+% 
+% %rename and clear
+% rejTrials_visual = logical(rejTrials_visual_arr);
+% clear rejTrials_visual_arr
+% clear rejTrialsIndex_visual
+% 
+% %trials to keep
+% trls_keep = ~rejTrials_visual;
+% trls_indx_keep = find(trls_keep);
+% ntrl_keep = length(trls_indx_keep);
+% 
+% %trials to reject
+% trls_rjct = rejTrials_visual;
+% trls_indx_rjct = find(trls_rjct);
+% ntrl_rjct = length(trls_indx_rjct);
+% 
+% ntrl = ntrl_keep+ntrl_rjct;
+% 
+% 
+% %rejected trials re-visited
+% trls_indx_rjct = [6 7 18 28 56 63 65 70 84 89 90 93 99 110 112 115 116 120 129 130 138 147 157 190 197  249 264];
+% trls_rjct = logical(zeros(size(rejTrials_visual)));
+% trls_rjct(trls_indx_rjct) = 1;
+% trls_keep = ~trls_rjct;
+% trls_indx_keep = find(trls_keep);
+% ntrl_keep = length(trls_indx_keep);
+% ntrl_rjct = length(trls_indx_rjct);
+% ntrl = ntrl_keep+ntrl_rjct;
 
 
 %% extract trial features
