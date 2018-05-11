@@ -1,5 +1,16 @@
 
 
+X = data.trial{1};
+close all
+figure, hold on
+for c = 1:size(X,1), plot(X(c,:),'k'); end
+COEFF = pca(X);
+plot(COEFF(:,1).*(max(max(abs(X)))),'r')
+COEFF = pca(abs(X));
+plot(COEFF(:,1).*(max(max(abs(X)))),'w')
+
+
+
 %% data padding
 
 paddata = data;
@@ -19,8 +30,8 @@ for i = 1:length(data.trial)
     
 end
 
-figure, plot(paddata.time{i}, paddata.trial{i}(100,:))
-hold on, plot(data.time{i}, data.trial{i}(100,:))
+% figure, plot(paddata.time{i}, paddata.trial{i}(100,:))
+% hold on, plot(data.time{i}, data.trial{i}(100,:))
 
 
 %% wavelet time-frequency decomposition
@@ -91,13 +102,13 @@ for rpt = 1:n_rpt %loop over trials
     end
 end
 
-% color_keep = [35,139,69]/255;
-% color_rjct = [215,48,31]/255;
-% 
-% figure
-% hold on
-% plot(w_freq, nanmean(w_coeffs(coeff_class==0,:)), 'color',color_keep)
-% plot(w_freq, nanmean(w_coeffs(coeff_class==1,:)), 'color',color_rjct)
+color_keep = [35,139,69]/255;
+color_rjct = [215,48,31]/255;
+
+figure
+hold on
+plot(w_freq, nanmean(w_coeffs(coeff_class==0,:)), 'color',color_keep)
+plot(w_freq, nanmean(w_coeffs(coeff_class==1,:)), 'color',color_rjct)
 
 
 %% cluster (log) coefficients around K means

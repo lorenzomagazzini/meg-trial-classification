@@ -40,8 +40,9 @@ lpfilt_freq = 4;
 %prepare cell array for storing subject data structures
 data_arr = cell(1,nsubj);
 
-%loop over subjects
-for s = 1% :nsubj
+% %loop over subjects
+% for s = 1% :nsubj
+s = 1;
 
 %define subj from list
 subj_label = strrep(file_list{s}, '_data.mat', '');
@@ -77,18 +78,18 @@ elseif do_lpfilt == 1
     
 end
 
-%add data to cell array
-data_arr{s} = data;
-clear data
-
-end
-
-%remove empty cells
-data_arr(cellfun(@isempty,data_arr)) = [];
-
-%create new data structure by appending subjects
-cfg = [];
-data = ft_appenddata(cfg, data_arr{:})
+% %add data to cell array
+% data_arr{s} = data;
+% clear data
+% 
+% end
+% 
+% %remove empty cells
+% data_arr(cellfun(@isempty,data_arr)) = [];
+% 
+% %create new data structure by appending subjects
+% cfg = [];
+% data = ft_appenddata(cfg, data_arr{:})
 
 
 %% load trial labels
@@ -146,6 +147,11 @@ ntrl_keep = length(trls_indx_keep);
 ntrl_rjct = length(trls_indx_rjct);
 ntrl = ntrl_keep+ntrl_rjct;
 
+
+%%
+
+%run script
+trialwavelet
 
 %% extract trial features
 
