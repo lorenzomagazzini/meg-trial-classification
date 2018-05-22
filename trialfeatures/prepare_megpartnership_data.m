@@ -23,6 +23,10 @@ if ~exist(data_savepath,'dir'), mkdir(data_savepath); end
 fig_savepath = fullfile(base_path, 'trainfigures');
 if ~exist(fig_savepath,'dir'), mkdir(fig_savepath); end
 
+%path to save labels
+labels_savepath = fullfile(base_path, 'trainlabels');
+if ~exist(labels_savepath,'dir'), mkdir(labels_savepath); end
+
 %set chmod permissions
 unix(['chmod -R 770 ' base_path])
 
@@ -32,6 +36,7 @@ unix(['addWriteAccessTo ' user_id ' /cubric/collab/meg-cleaning/cdf']) %one leve
 unix(['addWriteAccessTo ' user_id ' ' base_path])
 unix(['addWriteAccessTo ' user_id ' ' fullfile(base_path, 'traindata')])
 unix(['addWriteAccessTo ' user_id ' ' fullfile(base_path, 'trainfigures')])
+unix(['addWriteAccessTo ' user_id ' ' fullfile(base_path, 'trainlabels')])
 
 
 %% define list of MEGUK IDs
@@ -42,13 +47,13 @@ nsubj = length(id_list);
 
 %% get raw resteyesopen data from BIDS directory
 
-cfg = [];
-cfg.total_duration = 300; %in seconds
-cfg.trial_duration = 2; %in seconds
-cfg.precision = 'single';
-cfg.anonymise = 'no';
-
 for s = 1:nsubj %missing MarkerFile: 8, 17, 20, 25, 30, 33, 36
+    
+    cfg = [];
+    cfg.total_duration = 300; %in seconds
+    cfg.trial_duration = 2; %in seconds
+    cfg.precision = 'single';
+    cfg.anonymise = 'no';
     
     %define subject, dataset, markerfile
     subj = ['sub-' id_list{s}];
