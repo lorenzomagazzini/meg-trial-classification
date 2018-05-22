@@ -15,7 +15,7 @@ clear
 bids_path = '/cubric/collab/meg-partnership/cardiff/bids';
 
 %path to save raw data
-base_path = '/cubric/collab/meg-cleaning/megpartnership/restopen';
+base_path = '/cubric/collab/meg-cleaning/cdf/resteyesopen';
 data_savepath = fullfile(base_path, 'traindata');
 if ~exist(data_savepath,'dir'), mkdir(data_savepath); end
 
@@ -23,11 +23,15 @@ if ~exist(data_savepath,'dir'), mkdir(data_savepath); end
 fig_savepath = fullfile(base_path, 'trainfigures');
 if ~exist(fig_savepath,'dir'), mkdir(fig_savepath); end
 
-%set permissions
+%set chmod permissions
 unix(['chmod -R 770 ' base_path])
-unix(['addWriteAccessTo 1205074 ' base_path])
-unix(['addWriteAccessTo 1205074 ' fullfile(base_path, 'traindata')])
-unix(['addWriteAccessTo 1205074 ' fullfile(base_path, 'trainfigures')])
+
+%set ACLs
+user_id = '1205074';
+unix(['addWriteAccessTo ' user_id ' /cubric/collab/meg-cleaning/cdf']) %one level up from base_path
+unix(['addWriteAccessTo ' user_id ' ' base_path])
+unix(['addWriteAccessTo ' user_id ' ' fullfile(base_path, 'traindata')])
+unix(['addWriteAccessTo ' user_id ' ' fullfile(base_path, 'trainfigures')])
 
 
 %% define list of MEGUK IDs
@@ -41,6 +45,7 @@ nsubj = length(id_list);
 cfg = [];
 cfg.total_duration = 300; %in seconds
 cfg.trial_duration = 2; %in seconds
+cfg.precision = 'single';
 cfg.anonymise = 'no';
 
 for s = 1:nsubj %missing MarkerFile: 8, 17, 20, 25, 30, 33, 36
@@ -86,7 +91,7 @@ for s = 1:nsubj %missing MarkerFile: 8, 17, 20, 25, 30, 33, 36
     
     %save epoched .mat file
     epoc_savename = [dataset_name '-epoched.mat'];
-    fprintf('saving file %s to %s\n', cont_savename, epoc_savename)
+    fprintf('saving file %s to %s\n', epoc_savename, data_savepath)
     save(fullfile(data_savepath, epoc_savename), '-v7.3', '-struct', 'data_epoc')
     
 end
