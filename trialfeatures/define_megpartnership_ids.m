@@ -1,7 +1,77 @@
-function [ id_list ] = define_megpartnership_ids(  )
-% [ id_list ] = define_megpartnership_ids(  )
+function [ id_list ] = define_megpartnership_ids( purpose )
+% [ id_list ] = define_megpartnership_ids( purpose )
+% 
+% Input:
+%   purpose: string ('train' or 'test')
 
-% %% get list of Partnership IDs
+% Written May 2018 by Lorenzo Magazzini (magazzinil@gmail.com)
+
+
+%%
+
+switch purpose
+    
+    case 'train'
+        
+        id_list = {...
+            'cdf004'
+            'cdf007'
+            'cdf009'
+            'cdf011'
+            'cdf012'
+            'cdf013'
+            'cdf015'
+            'cdf020'
+            'cdf021'
+            'cdf023'
+            'cdf024'
+            'cdf026'
+            'cdf027'
+            'cdf029'
+            'cdf030'
+            'cdf031'
+            'cdf033'
+            'cdf034'
+            'cdf038'
+            'cdf041'
+            'cdf043'
+            'cdf044'
+            'cdf045'
+            'cdf046'
+            'cdf048'
+            'cdf049'
+            'cdf050'
+            'cdf051'
+            'cdf060'
+            'cdf063'
+            'cdf064'
+            'cdf065'
+            'cdf067'
+            'cdf068'
+            'cdf069'
+            'cdf070'
+            'cdf075'
+            'cdf076'
+            'cdf077'
+            'cdf078'
+            'cdf079'
+            'cdf083'
+            'cdf084'
+            'cdf088'};
+        
+    case 'test'
+        
+        error('id_list for testing set not yet defined')
+        
+    otherwise
+        
+        error('please specify input variable purpose as ''train'' or ''test''')
+        
+end
+
+% %% old code used to divide Cardiff Partnership participants into training and testing set
+% 
+% %%%get list of Partnership IDs
 %
 % %path to MEG Partnership data in collab (Analysis folder) ... only used for the IDs!
 % partnership_path = '/cubric/collab/meg-partnership/Analysis';
@@ -12,8 +82,7 @@ function [ id_list ] = define_megpartnership_ids(  )
 % nsubj = length(subj_list);
 % clear tmp*
 %
-%
-% %% get list of MEGUK IDs
+% %%%get list of MEGUK IDs
 %
 % id_list = cell(size(subj_list,1)/2, 1);
 % s_count = 0;
@@ -24,53 +93,3 @@ function [ id_list ] = define_megpartnership_ids(  )
 % end
 % id_list = sort(id_list); %sort subjects by MEGUK ID
 
-
-%% define list of MEGUK IDs
-
-id_list = {...
-    'cdf004'
-    'cdf007'
-    'cdf009'
-    'cdf011'
-    'cdf012'
-    'cdf013'
-    'cdf015'
-    'cdf020'
-    'cdf021'
-    'cdf023'
-    'cdf024'
-    'cdf026'
-    'cdf027'
-    'cdf029'
-    'cdf030'
-    'cdf031'
-    'cdf033'
-    'cdf034'
-    'cdf038'
-    'cdf041'
-    'cdf043'
-    'cdf044'
-    'cdf045'
-    'cdf046'
-    'cdf048'
-    'cdf049'
-    'cdf050'
-    'cdf051'
-    'cdf060'
-    'cdf063'
-    'cdf064'
-    'cdf065'
-    'cdf067'
-    'cdf068'
-    'cdf069'
-    'cdf070'
-    'cdf075'
-    'cdf076'
-    'cdf077'
-    'cdf078'
-    'cdf079'
-    'cdf083'
-    'cdf084'
-    'cdf088'};
-
-end

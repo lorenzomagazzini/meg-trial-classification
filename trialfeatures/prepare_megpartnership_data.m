@@ -32,7 +32,7 @@ unix(['addWriteAccessTo 1205074 ' fullfile(base_path, 'trainfigures')])
 
 %% define list of MEGUK IDs
 
-id_list = define_megpartnership_ids;
+id_list = define_megpartnership_ids('train');
 nsubj = length(id_list);
 
 
