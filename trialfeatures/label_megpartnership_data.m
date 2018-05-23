@@ -28,7 +28,7 @@ nsubj = length(file_list);
 %%
 
 %define subj from list (Lorenzo to mark odd-indexed participants, Diana to mark even-indexed ones)
-s = 1
+s = 5
 
 %define files
 data_filename = file_list{s}
@@ -53,6 +53,9 @@ data = ft_preprocessing(cfg, data_epoc)
 % cfg.padding    	= 2*ceil(abs(data.time{1}(end)-data.time{1}(1)));
 % cfg.padtype    	= 'mirror';
 % data = ft_preprocessing(cfg, data)
+
+close all
+cd(base_path)
 
 
 %% 4 Hz low-pass
