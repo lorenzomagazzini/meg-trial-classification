@@ -1,8 +1,6 @@
-function [ data, labels ] = get_svm_data( datafile, labelfile, feature_set )
+function [ data ] = get_svm_data (features, feature_set )
 %datafile: file containing feature struct
 %labelfile: file containing trial labels
-
-load(datafile);
 
 switch feature_set
     
@@ -18,8 +16,6 @@ switch feature_set
         data = [features.wthn_chan_var_max' features.wthn_chan_var_sum' features.btwn_chan_var_avg' features.btwn_chan_var_max' features.btwn_chan_kurt_mean' features.btwn_chan_kurt_max' features.chan_corr_mean' features.chan_corr_max'];
 end;
 
-load(labelfile);
-labels = rejTrials_visual;
 
 end
 
