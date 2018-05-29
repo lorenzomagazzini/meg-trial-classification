@@ -28,7 +28,7 @@ nsubj = length(file_list);
 %%
 
 %define subj from list (Lorenzo to mark odd-indexed participants, Diana to mark even-indexed ones)
-s = 9
+s = 19
 
 %define files
 data_filename = file_list{s}
