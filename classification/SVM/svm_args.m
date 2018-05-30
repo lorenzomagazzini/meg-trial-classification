@@ -1,3 +1,4 @@
+%this is the class defining arguments for the classification functions
 classdef svm_args
     
     properties (Access = public)

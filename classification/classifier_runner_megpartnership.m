@@ -1,3 +1,5 @@
+% this script runs a linear SVM with different types of cross-validation 
+% on features from MEG partnership data.
 %% paths and definitions
 
 %Lorenzo's paths:
@@ -62,7 +64,7 @@ end;
 
 save([output_path 'results_loo_cdf.mat'],'results');
 
-%% (3) separate classification on each feature set
+%% (3) separate classification on each feature set; note - I haven't updated this and need some more sensible indexing here
 switch feature_set
     case 'max'
         setsize = 5;
@@ -89,7 +91,7 @@ end;
 
 save([output_path 'results_5foldcv_feat_sets.mat'],'results');
 
-%% (4) cross-participant
+%% (4) cross-participant -- deprecated (for previous 3-participant set)
 
 results = cell(3,3);
 

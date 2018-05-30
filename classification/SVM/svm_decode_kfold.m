@@ -36,12 +36,12 @@ end;
 
 results = struct;
 
-for icv = 1: svm_par.iterate_cv
+for icv = 1: svm_par.iterate_cv % we can do iterated cross-validation here
 
-    cv = cvpartition(labels, 'kfold', svm_par.kfold);
+    cv = cvpartition(labels, 'kfold', svm_par.kfold); %get the cross-validation indices - random but stratified (balanced classes)
     allscore = zeros(length(labels),1); accuracy = zeros(3,svm_par.kfold);
     
-    for ii = 1:svm_par.kfold
+    for ii = 1:svm_par.kfold %for each fold
         
         %scale values using range and minimum of training set
         kdata = data; %ensures we keep original data

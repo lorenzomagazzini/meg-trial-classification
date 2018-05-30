@@ -1,6 +1,14 @@
 function [ data ] = get_svm_data (features, feature_set )
-%datafile: file containing feature struct
-%labelfile: file containing trial labels
+%Prepares the feature vector for classification
+%Inputs:
+%features: struct containing extracted features (output from feature
+%extraction scripts)
+% feature_set: combination of features selected. 
+%       --max: maximal summary value
+%       -- within: channel-specific features
+%       --between: across-channel features (which are time-resolved)
+%       --within-between: combine the two
+%       --single-value: all summary features (1 value per trial)
 
 switch feature_set
     

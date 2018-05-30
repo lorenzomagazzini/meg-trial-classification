@@ -1,4 +1,4 @@
-
+%extract features from MEG partnership data
 %Lorenzo's paths:
 % addpath('~/git-lab/Trial-classification/trialfeatures/')
 % addpath('/home/c1356674/git-lab/ampreject/functions')
@@ -33,7 +33,7 @@ hpfilt = [0,1,0]; lpfilt = [0,0,1];
 filtering_order = {'broadband','high-pass','low-pass'};
 
 %loop over subjects
-for s = 2:20%:nsubj
+for s = 1:20%:nsubj
     
     %load data
     cd(data_path)
@@ -99,10 +99,10 @@ for s = 2:20%:nsubj
         label_filename = strrep(file_list{s}, 'meg-epoched', 'epoch-labels');
         load(fullfile(label_path, label_filename));
         %create trial index
-        trl_idx = zeros(1,length(data.trial)); trl_idx(badtrialsindex) = 1;
+        trl_idx = zeros(1,length(data.trial)); trl_idx(badtrialsindex) = 1; %bad trials are labeled 1
         
         f = extract_trialfeatures(data); 
-        features(filt) = deal(f);
+        features(filt) = deal(f); %store in non-scalar struct
                 
     end
     
@@ -110,7 +110,7 @@ for s = 2:20%:nsubj
     clear features;
 end
         
-%% get MDS plots
+%% get MDS plots for all subjects
 for i = 1:20
     
     load([feature_path num2str(i,'%02d') 'features.mat']);
