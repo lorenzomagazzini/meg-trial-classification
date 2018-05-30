@@ -110,3 +110,10 @@ for s = 2:20%:nsubj
     clear features;
 end
         
+%% get MDS plots
+for i = 1:20
+    
+    load([feature_path num2str(i) 'features.mat']);
+    plot_mds_features(features, trl_idx, sprintf('/cubric/collab/meg-cleaning/cdf/resteyesopen/trainfeatures/mds/%d_mds',i))
+    
+end
