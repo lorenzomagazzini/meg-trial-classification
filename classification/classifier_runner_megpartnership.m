@@ -21,7 +21,7 @@ all_labels = cell(1,length(filenames));
 for s = 1:length(filenames)
     
     all_feat = [];
-    load(filenames{s});
+    load([feature_path filenames{s}]);
     
     for f = 1:3
         
@@ -39,28 +39,28 @@ end;
 
 %% (1) kfold CV on all participants
 
-data_kfold = cat(1,all_data{:});
-labels_kfold = cat(1,all_labels{:});
+% data_kfold = cat(1,all_data{:});
+% labels_kfold = cat(1,all_labels{:});
+% 
+% results = svm_decode_kfold(data_kfold,labels_kfold, 'weights',true);
+% save([output_path 'results_5foldcv_allfeat.mat'],'results');
 
-results = svm_decode_kfold(data_kfold,labels_kfold, 'weights',true);
-save([output_path 'results_5foldcv_allfeat.mat'],'results');
+%% (2) leave-one-subject-out cross-validation
+clearvars -EXCEPT all_data all_labels;
 
-%% (2) cross-participant CV (train on 2, test on 1)
-results = cell(1,3);
-
-for fold = 1:3
+for fold = 1:length(all_data)
     
     testdata = all_data{fold};
-    testlabels = all_labels{fold};
+    testlabels = all_labels{fold}';
     traindata = all_data; traindata(fold) = []; traindata = cat(1,traindata{:});
-    trainlabels = all_labels; trainlabels(fold) = []; trainlabels = cat(1,trainlabels{:});
+    trainlabels = all_labels; trainlabels(fold) = []; trainlabels = cat(2,trainlabels{:})';
     
     res = svm_decode_holdout(traindata, trainlabels, testdata, testlabels, 'weights', true);
-    results{fold} = res;
+    results(fold) = res;
     
 end;
 
-save([output_path 'results_cross_subj_allfeat.mat'],'results');
+save([output_path 'results_loo_cdf.mat'],'results');
 
 %% (3) separate classification on each feature set
 switch feature_set

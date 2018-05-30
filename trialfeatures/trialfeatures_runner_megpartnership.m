@@ -33,7 +33,7 @@ hpfilt = [0,1,0]; lpfilt = [0,0,1];
 filtering_order = {'broadband','high-pass','low-pass'};
 
 %loop over subjects
-for s = 1 %:nsubj
+for s = 2:20%:nsubj
     
     %load data
     cd(data_path)
