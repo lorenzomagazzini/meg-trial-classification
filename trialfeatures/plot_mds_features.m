@@ -1,11 +1,16 @@
 function [ ] = plot_mds_features( features, trl_idx, outfile)
 % Multi-dimensional scaling plots 
+% Inputs: --features - structure as output by the feature extraction scripts
+%         --trl_idx - labels of good vs bad trials (1:bad, 0:good)
+%         --outfile - figure filename. For non-scalar structure arrays, the
+%                     number of figures saved = the size of the structure array.
+
 
 for i = 1:length(features)
     
-    filename = sprintf([outfile '%d.fig'],i);
-    fields = fieldnames(features(i));
-    %exclude_features = {'chan_corr','wthn_chan_var','btwn_chan_var','wthn_chan_kurt','btwn_chan_kurt'}; fields(ismember(fields,exclude_features)) = []; 
+    filename = sprintf([outfile '%d.fig'],i); 
+    fields = fieldnames(features(i)); 
+    %exclude_features = {'chan_corr','wthn_chan_var','btwn_chan_var','wthn_chan_kurt','btwn_chan_kurt'}; fields(ismember(fields,exclude_features)) = []; %don't need this now
     
     subplot_n = ceil(length(fields)/3);
     figure;

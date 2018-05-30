@@ -27,6 +27,7 @@ if abs(nargin)<4
     error('Separate training and testing data and labels are needed as inputs.')
 end;
 
+%LibSVM requires double data
 if ~isa(train_data, 'double')
     train_data = double(train_data);
 end;
@@ -34,20 +35,22 @@ if ~isa(test_data, 'double')
     test_data = double(test_data);
 end;
 
-%scale values using range and minimum of training set
+%scale values using range and minimum of training set - this is best practice
 if svm_par.standardize
     train_data = (train_data - repmat(min(train_data, [], 1), size(train_data, 1), 1)) ./ repmat(max(train_data, [], 1) - min(train_data, [], 1), size(train_data, 1), 1);
     test_data = (test_data - repmat(min(train_data, [], 1), size(test_data, 1), 1)) ./ repmat(max(train_data, [], 1) - min(train_data, [], 1), size(test_data, 1), 1);
 end;
 
+%train and test the model
 svm_model = train(train_labels, sparse(train_data), sprintf('-s %d -c %d -q 1', svm_par.solver, svm_par.boxconstraint));
-[scores, accuracy, ~] = predict(test_labels, sparse(test_data), svm_model, '-q 1');
+[scores, accuracy, ~] = predict(test_labels, sparse(test_data), svm_model, '-q 1'); %this outputs labels, accuracy, and standard error
 
+%put everything we can think of in a results structure
 results.Accuracy = accuracy(1);
 results.AccuracyMSError = accuracy(2);
 results.Confusion = zeros(2,2);
-results.Confusion = confusionmat(test_labels,scores);
-if numel(results.Confusion)>1
+results.Confusion = confusionmat(test_labels,scores); %get the confusion matrix
+if numel(results.Confusion)>1 %check that this was output right (sometimes weird class numbers interfere with this)
     results.Sensitivity = results.Confusion(1,1)/(sum(results.Confusion(1,:))); %TP/allP = TP/(TP+FN)
     PP = results.Confusion(1,1)/(sum(results.Confusion(:,1))); %positive predictive value: class1
     results.Specificity = results.Confusion(2,2)/(sum(results.Confusion(2,:))); %TN/allN = TN/(FP+TN)
