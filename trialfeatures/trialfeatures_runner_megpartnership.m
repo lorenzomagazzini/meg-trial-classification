@@ -106,14 +106,14 @@ for s = 2:20%:nsubj
                 
     end
     
-    save(fullfile(feature_path, [num2str(s) 'features.mat']), '-v7.3', 'filtering_order','trl_idx','features'); %keeping this as struct - as coded in svm data extraction script; labels are also here
+    save(fullfile(feature_path, [num2str(s,'%02d') 'features.mat']), '-v7.3', 'filtering_order','trl_idx','features'); %keeping this as struct - as coded in svm data extraction script; labels are also here
     clear features;
 end
         
 %% get MDS plots
 for i = 1:20
     
-    load([feature_path num2str(i) 'features.mat']);
+    load([feature_path num2str(i,'%02d') 'features.mat']);
     plot_mds_features(features, trl_idx, sprintf('/cubric/collab/meg-cleaning/cdf/resteyesopen/trainfeatures/mds/%d_mds',i))
     
 end
