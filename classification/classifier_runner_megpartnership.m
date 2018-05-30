@@ -46,7 +46,7 @@ end;
 % save([output_path 'results_5foldcv_allfeat.mat'],'results');
 
 %% (2) leave-one-subject-out cross-validation
-clearvars -EXCEPT all_data all_labels;
+clearvars -EXCEPT all_data all_labels feature_path output_path filenames feature_set;
 
 for fold = 1:length(all_data)
     
