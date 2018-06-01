@@ -19,7 +19,8 @@ data_path = fullfile(base_path, 'traindata');
 label_path = fullfile(base_path, 'trainlabels');
 
 %savepath for extracted features
-feature_path = fullfile(base_path, 'trainfeatures');
+% feature_path = fullfile(base_path, 'trainfeatures');
+feature_path = fullfile(base_path, 'trainfeatures_sw');
 
 %list of files
 dir_struct = dir(fullfile(data_path, 'sub-*epoched.mat'));
@@ -33,13 +34,13 @@ hpfilt = [0,1,0]; lpfilt = [0,0,1];
 filtering_order = {'broadband','high-pass','low-pass'};
 
 %loop over subjects
-for s = 1% :20%:nsubj
+for s = 1:20%:nsubj
     
     %load data
     cd(data_path)
     data = load(file_list{s});
     
-    for filt = 1% :3 %giant filtering loop
+    for filt = 1:3 %giant filtering loop
         
         
         %pre-processing (high freq) e.g. for muscle artifacts
@@ -101,19 +102,20 @@ for s = 1% :20%:nsubj
         %create trial index
         trl_idx = zeros(1,length(data.trial)); trl_idx(badtrialsindex) = 1;
         
-        f = extract_trialfeatures(data); 
+%         f = extract_trialfeatures(data);
+        f = extract_trialfeatures_sw(data);
         features(filt) = deal(f);
-                
+        
     end
     
     save(fullfile(feature_path, [num2str(s,'%02d') 'features.mat']), '-v7.3', 'filtering_order','trl_idx','features'); %keeping this as struct - as coded in svm data extraction script; labels are also here
     clear features;
 end
-        
+
 %% get MDS plots
 for i = 1:20
     
-    load([feature_path num2str(i,'%02d') 'features.mat']);
+    load(fullfile(feature_path, [num2str(i,'%02d') 'features.mat']));
     plot_mds_features(features, trl_idx, sprintf('/cubric/collab/meg-cleaning/cdf/resteyesopen/trainfeatures/mds/%d_mds',i))
     
 end
