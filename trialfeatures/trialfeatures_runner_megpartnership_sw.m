@@ -115,7 +115,7 @@ end
 %% get MDS plots
 for i = 1:20
     
-    load([feature_path num2str(i,'%02d') 'features.mat']);
+    load(fullfile(feature_path, [num2str(i,'%02d') 'features.mat']));
     plot_mds_features(features, trl_idx, sprintf('/cubric/collab/meg-cleaning/cdf/resteyesopen/trainfeatures/mds/%d_mds',i))
     
 end
