@@ -8,11 +8,11 @@
 addpath(genpath('/cubric/scratch/c1465333/trial_classification/Trial-classification/'));
 
 %output_path = '/cubric/collab/meg-cleaning/classification/';
-feature_path = '/cubric/collab/meg-cleaning/cdf/resteyesopen/trainfeatures/';
+feature_path = '/cubric/collab/meg-cleaning/cdf/resteyesopen/trainfeatures_sw/';
 base_path = '/cubric/collab/meg-cleaning/';
 
 filenames = dir(feature_path);
-filenames = {filenames(3:end-1).name};
+filenames = {filenames(3:end).name};
 feature_set = input('Choose feature set to use: max, within, between, within-between, single-value: ', 's');
 output_path = [base_path 'classification/output/' feature_set '/'];
 
@@ -41,11 +41,11 @@ end;
 
 %% (1) kfold CV on all participants
 
-% data_kfold = cat(1,all_data{:});
-% labels_kfold = cat(1,all_labels{:});
-% 
-% results = svm_decode_kfold(data_kfold,labels_kfold, 'weights',true);
-% save([output_path 'results_5foldcv_allfeat.mat'],'results');
+data_kfold = cat(1,all_data{:});
+labels_kfold = cat(2,all_labels{:});
+
+results = svm_decode_kfold(data_kfold,labels_kfold', 'weights',true);
+save([output_path 'results_5foldcv_allfeat_sw.mat'],'results');
 
 %% (2) leave-one-subject-out cross-validation
 clearvars -EXCEPT all_data all_labels feature_path output_path filenames feature_set;
@@ -62,7 +62,7 @@ for fold = 1:length(all_data)
     
 end;
 
-save([output_path 'results_loo_cdf.mat'],'results');
+save([output_path 'results_loo_cdf_sw.mat'],'results');
 
 %% (3) separate classification on each feature set; note - I haven't updated this and need some more sensible indexing here
 switch feature_set
