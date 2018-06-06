@@ -1,4 +1,4 @@
-function [ features ] = extract_trialfeatures( data, do_plot )
+function [ features ] = extract_trialfeatures_sw( data, do_plot )
 %[ features ] = extract_trialfeatures( data, do_plot )
 %   Extract a number of different trial features from the input data
 

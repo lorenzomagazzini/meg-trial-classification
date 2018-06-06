@@ -3,7 +3,7 @@ function [ data ] = get_svm_data (features, feature_set )
 %Inputs:
 %features: struct containing extracted features (output from feature
 %extraction scripts)
-% feature_set: combination of features selected. 
+% feature_set: combination of features selected.
 %       --max: maximal summary value
 %       -- within: channel-specific features
 %       --between: across-channel features (which are time-resolved)
@@ -15,11 +15,24 @@ switch feature_set
     case 'max'
         data = [features.wthn_chan_var_max' features.wthn_chan_kurt_max' features.wthn_chan_corr_max' features.btwn_chan_corr_max' features.btwn_chan_var_max' features.btwn_chan_kurt_max'];
     case 'within'
-        data = [features.wthn_chan_var' features.wthn_chan_kurt' features.chan_corr'];
+        if ~ismatrix(features.wthn_chan_var)
+            data = [squeeze(max(features.wthn_chan_var,[],2))' squeeze(max(features.wthn_chan_kurt,[],2))' squeeze(max(features.wthn_chan_corr,[],2))']; %take max across slides
+        else
+            data = [features.wthn_chan_var' features.wthn_chan_kurt' features.wthn_chan_corr'];
+        end
     case 'between'
-        data = [features.btwn_chan_var' features.btwn_chan_kurt'];
+        if ~ismatrix(features.btwn_chan_var)
+            data = [squeeze(max(features.btwn_chan_var,[],2))' squeeze(max(features.btwn_chan_kurt,[],2))' squeeze(max(features.btwn_chan_corr,[],2))'];
+        else
+            data = [features.btwn_chan_var' features.btwn_chan_kurt' features.btwn_chan_corr'];
+        end
     case 'within-between'
-        data = [features.wthn_chan_var' features.wthn_chan_kurt' features.chan_corr' features.btwn_chan_var' features.btwn_chan_kurt'];
+        if ~ismatrix(features.btwn_chan_var)
+            data = [squeeze(max(features.wthn_chan_var,[],2))' squeeze(max(features.wthn_chan_kurt,[],2))' squeeze(max(features.wthn_chan_corr,[],2))',...
+                squeeze(max(features.btwn_chan_var,[],2))' squeeze(max(features.btwn_chan_kurt,[],2))' squeeze(max(features.btwn_chan_corr,[],2))'];
+        else
+            data = [features.wthn_chan_var' features.wthn_chan_kurt' features.chan_corr' features.btwn_chan_var' features.btwn_chan_kurt'];
+        end
     case 'single-value'
         data = [features.wthn_chan_var_max' features.wthn_chan_var_avg' features.btwn_chan_var_avg' features.btwn_chan_var_max' features.btwn_chan_kurt_avg',...
             features.btwn_chan_kurt_max' features.wthn_chan_corr_avg' features.wthn_chan_corr_max' features.btwn_chan_corr_avg' features.btwn_chan_corr_max'];
