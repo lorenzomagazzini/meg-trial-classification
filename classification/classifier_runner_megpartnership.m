@@ -8,7 +8,7 @@
 addpath(genpath('/cubric/scratch/c1465333/trial_classification/Trial-classification/'));
 
 %output_path = '/cubric/collab/meg-cleaning/classification/';
-feature_path = '/cubric/collab/meg-cleaning/cdf/resteyesopen/trainfeatures/';
+feature_path = '/cubric/collab/meg-cleaning/cdf/resteyesopen/trainfeatures_sw/';
 base_path = '/cubric/collab/meg-cleaning/';
 
 filenames = dir(feature_path);
@@ -54,12 +54,23 @@ for s = 1:length(filenames)
 end;
 
 %% (1) kfold CV on all participants
+do_balance = input('Balance classes? 0 = no, 1 = yes: ');
 
 data_kfold = cat(1,all_data{:});
 labels_kfold = cat(2,all_labels{:});
 
+if do_balance
+    class1 = find(labels_kfold==0); class2 = find(labels_kfold==1); d = length(class1)-length(class2);
+    if d>0
+        rm_idx = class1(randperm(length(class1),d)); labels_kfold(rm_idx) = []; data_kfold(rm_idx,:) = [];
+    elseif d<0
+        rm_idx = class2(randperm(length(class2),abs(d))); labels_kfold(rm_idx) = []; data_kfold(rm_idx,:) = [];
+    end
+end
+
+
 results = svm_decode_kfold(data_kfold,labels_kfold', 'weights',true);
-save([output_path 'results_5foldcv_allfeat_sw.mat'],'results');
+save([output_path 'results_5foldcv_allfeat_sw_balanced.mat'],'results');
 
 %% (2) leave-one-subject-out cross-validation
 clearvars -EXCEPT all_data all_labels feature_path output_path filenames feature_set;
@@ -78,7 +89,45 @@ end;
 
 save([output_path 'results_loo_cdf_sw_balanced.mat'],'results');
 
-%% (3) separate leave-one-out classification on each feature set (different filters)
+%% (3) separate kfold classification on each feature set (different filters)
+%note that here, subsampling classes is done across participants (thus we keep more data, and better performance, but not likely to generalize to new ppl...)
+do_balance = input('Balance classes? 0 = no, 1 = yes: ');
+
+for f = 1:3
+    
+    all_data = cell(1,length(filenames));
+    all_labels = cell(1,length(filenames));
+
+    for s = 1:length(filenames)
+    
+        load([feature_path filenames{s}]);
+        feat = features(f); %each filtering condition
+        data = get_svm_data(feat, feature_set);
+        all_data{s} = data;
+        all_labels{s} = double(trl_idx); 
+    end 
+ 
+    data_kfold = cat(1,all_data{:});
+    labels_kfold = cat(2,all_labels{:});
+    
+    if do_balance
+        class1 = find(labels_kfold==0); class2 = find(labels_kfold==1); d = length(class1)-length(class2);
+        if d>0
+            rm_idx = class1(randperm(length(class1),d)); labels_kfold(rm_idx) = []; data_kfold(rm_idx,:) = [];
+        elseif d<0
+            rm_idx = class2(randperm(length(class2),abs(d))); labels_kfold(rm_idx) = []; data_kfold(rm_idx,:) = [];
+        end
+    end
+    
+    
+    results = svm_decode_kfold(data_kfold,labels_kfold', 'weights',true);
+    save([output_path filtering_order{f} '_results_5foldcv_sw_balanced.mat'],'results');
+    plot_classification_results(results); suptitle(filtering_order{f});
+    saveas(gca,[output_path filtering_order{f} '_results_5foldcv_sw_balanced.png']);
+     
+end
+
+%% (4)  separate leave-one-out classification on each feature set (different filters)
 do_balance = input('Balance classes? 0 = no, 1 = yes: ');
 for f = 1:3
     
@@ -121,9 +170,7 @@ for f = 1:3
      
 end
 
-
-
-%% (4) cross-participant -- deprecated (for previous 3-participant set)
+%% (5) cross-participant -- deprecated (for previous 3-participant set)
 % 
 % results = cell(3,3);
 % 
@@ -147,7 +194,7 @@ end
 % 
 % save([output_path 'results_cross_subj_feat_sets.mat'],'results');
 
-%% (5) RFE on full dataset
+%% (6) RFE on full dataset
 % this would take a while with thousands of features
 
 % data_kfold = cat(1,all_data{:});

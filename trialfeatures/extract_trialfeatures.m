@@ -65,7 +65,7 @@ features.wthn_chan_kurt_max = wthn_chan_kurt_max;
 btwn_chan_kurt = get_btwn_chan_kurtosis(data);
 
 %average variance over time
-btwn_chan_kurt_avg = avg(btwn_chan_kurt);
+btwn_chan_kurt_avg = mean(btwn_chan_kurt);
 
 %max variance across time
 btwn_chan_kurt_max = max(btwn_chan_kurt);
