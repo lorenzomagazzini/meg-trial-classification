@@ -20,6 +20,7 @@ for i = 1:length(results) %case structure
     c = colorbar; c.Label.String = 'Proportion trials (%)';
     if i==1, ylabel('Observed'); xlabel('Predicted'); end
     set(gca,'XTick',[1 2]); set(gca,'XTickLabel',results(i).Label); set(gca,'YTick',[1 2]); set(gca,'YTickLabel',results(i).Label); %plots confusion matrix
+    set(gca,'TickLength',[0.001 0.001]); 
     
     count = count+1;
     subplot(length(results),2,count); line([1 length(results(i).Weights)], [0 0], 'LineStyle','--','color','k'); hold on; 

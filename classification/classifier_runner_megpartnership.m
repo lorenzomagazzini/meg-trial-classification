@@ -8,11 +8,11 @@
 addpath(genpath('/cubric/scratch/c1465333/trial_classification/Trial-classification/'));
 
 %output_path = '/cubric/collab/meg-cleaning/classification/';
-feature_path = '/cubric/collab/meg-cleaning/cdf/resteyesopen/trainfeatures_sw/';
+feature_path = '/cubric/collab/meg-cleaning/cdf/resteyesopen/trainfeatures/';
 base_path = '/cubric/collab/meg-cleaning/';
 
 filenames = dir(feature_path);
-filenames = {filenames(3:end).name};
+filenames = {filenames(3:end-1).name};
 feature_set = input('Choose feature set to use: max, within, between, within-between, single-value: ', 's');
 output_path = [base_path 'classification/output/' feature_set '/'];
 

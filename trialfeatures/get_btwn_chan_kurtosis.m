@@ -31,7 +31,7 @@ if slide_window
 elseif ~slide_window
     
     trl = cat(3, data.trial{:}); %store trials in 3D matrix
-    btwn_chan_kurt = kurtosis(trl,[],1); %calculate between-channel kurtosis, separately for each trial (NTime x NTrl)
+    btwn_chan_kurt = squeeze(kurtosis(trl,[],1)); %calculate between-channel kurtosis, separately for each trial (NTime x NTrl)
     
 end
 

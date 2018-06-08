@@ -89,7 +89,7 @@ wthn_chan_corr_max = max(wthn_chan_corr);
 
 %output
 features.wthn_chan_corr = wthn_chan_corr;
-features.wthn_chan_corr_mean = wthn_chan_corr_avg;
+features.wthn_chan_corr_avg = wthn_chan_corr_avg;
 features.wthn_chan_corr_max = wthn_chan_corr_max;
 
 %% between channel correlation (trials with artifacts will have higher between-channel correlation)
@@ -105,7 +105,7 @@ btwn_chan_corr_max = max(btwn_chan_corr);
 
 %output
 features.btwn_chan_corr = btwn_chan_corr;
-features.btwn_chan_corr_mean = btwn_chan_corr_avg;
+features.btwn_chan_corr_avg = btwn_chan_corr_avg;
 features.btwn_chan_corr_max = btwn_chan_corr_max;
 
 

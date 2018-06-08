@@ -26,8 +26,8 @@ subplot(1,2,2);
 for i = 1:length(results) %case structure
     
     line([0 length(results)+1], [0 0], 'LineStyle','--','color','k'); hold on;  line([0 length(results)+1], [1 1], 'LineStyle','--','color','k'); hold on;
-    sens = plot(i,results(i).Sensitivity,'.b','MarkerSize',10); hold on;
-    spec = plot(i,results(i).Specificity,'.r','MarkerSize',10); hold on;
+    sens = plot(i,results(i).Sensitivity,'.b','MarkerSize',15); hold on;
+    spec = plot(i,results(i).Specificity,'.r','MarkerSize',15); hold on;
     
 end
 box off; xlim([0 length(results)+1]); ylim([-0.1 1.3]);
