@@ -3,7 +3,7 @@ function [ ] = plot_confusion_matrices( filenames, titles)
 %filenames are the files to load, containing a scalar results structure
 %titles is a cell array with the titles to assign each subplot
 
-sub_n = ceil(length(filenames/2));
+sub_n = ceil(length(filenames)/2);
 
 figure;
 
