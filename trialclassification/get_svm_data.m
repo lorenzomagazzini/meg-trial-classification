@@ -1,16 +1,17 @@
 function [ data ] = get_svm_data (features, feature_set )
-%Prepares the feature vector for classification
+%Prepares the feature vector for classification. Different features/feature combination can be extracted for classification.
 %Inputs:
-%features: struct containing extracted features (output from feature
-%extraction scripts)
+%features: struct containing extracted features (output from feature extraction scripts)
 % feature_set: combination of features selected.
 %       --max: maximal summary value
-%       -- within: channel-specific features
+%       --within: channel-specific features
 %       --between: across-channel features (which are time-resolved)
 %       --within-between: combine the two
 %       --single-value: all summary features (1 value per trial)
+%
+% DC Dima 2018 (diana.dima@gmail.com)
 
-switch feature_set
+switch feature_set %based on input, features from a specific set are concatenated into a feature vector
     
     case 'max'
         data = [features.wthn_chan_var_max' features.wthn_chan_kurt_max' features.wthn_chan_corr_max' features.btwn_chan_corr_max' features.btwn_chan_var_max' features.btwn_chan_kurt_max'];
