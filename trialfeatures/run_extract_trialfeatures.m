@@ -1,46 +1,47 @@
-%extract features from MEG partnership data
-%Lorenzo's paths:
-% addpath('~/git-lab/Trial-classification/trialfeatures/')
-% addpath('/home/c1356674/git-lab/ampreject/functions')
 
-%Diana's:
-addpath('/cubric/scratch/c1465333/trial_classification/Trial-classification/trialfeatures');
+%Extract trial features from MEG data
+
+% Written by L Magazzini (magazzinil@gmail.com) and DC Dima (diana.dima@gmail.com)
+
+
+%%
 
 clear
 
-%path to collab
-base_path = '/cubric/collab/meg-cleaning/cdf/resteyesopen';
-cd(base_path)
+%add paths
+base_path = strrep(mfilename('fullpath'),'trialfeatures/run_extract_trialfeatures','');
+addpath(genpath(base_path))
 
 %path to raw data (.mat files)
-data_path = fullfile(base_path, 'traindata');
+data_path = fullfile(base_path, 'data', 'traindata');
 
 %path to bad trials index (classifier labels)
-label_path = fullfile(base_path, 'trainlabels');
+label_path = fullfile(base_path, 'data', 'trainlabels');
 
 %savepath for extracted features
-feature_path = fullfile(base_path, 'trainfeatures');
+feature_path = fullfile(base_path, 'data', 'trainfeatures');
 
 %list of files
 dir_struct = dir(fullfile(data_path, 'sub-*epoched.mat'));
 file_list = {dir_struct(:).name}';
 nsubj = length(file_list);
 
+
 %% load and preprocess data for each filtering condition
 
 %set filtering flags and save indexing order for later
-hpfilt = [0,1,0]; lpfilt = [0,0,1];
+hpfilt = [0,1,0];
+lpfilt = [0,0,1];
 filtering_order = {'broadband','high-pass','low-pass'};
 
 %loop over subjects
-for s = 1:20%:nsubj
+for s = 1:nsubj
     
     %load data
     cd(data_path)
     data = load(file_list{s});
     
     for filt = 1:3 %giant filtering loop
-        
         
         %pre-processing (high freq) e.g. for muscle artifacts
         do_hpfilt = hpfilt(filt);% 1;%
@@ -94,7 +95,6 @@ for s = 1:20%:nsubj
             
         end
         
-        
         %now load the trial labels
         label_filename = strrep(file_list{s}, 'meg-epoched', 'epoch-labels');
         load(fullfile(label_path, label_filename));
@@ -107,13 +107,18 @@ for s = 1:20%:nsubj
     end
     
     save(fullfile(feature_path, [num2str(s,'%02d') 'features.mat']), '-v7.3', 'filtering_order','trl_idx','features'); %keeping this as struct - as coded in svm data extraction script; labels are also here
-    clear features;
-end
-        
-%% get MDS plots for all subjects
-for i = 1:20
+    clear features
     
-    load([feature_path '/' num2str(i,'%02d') 'features.mat']);
+end
+
+
+%% get MDS plots
+
+for i = 1:2
+    
+    load(fullfile(feature_path, [num2str(i,'%02d') 'features.mat']));
     plot_mds_features(features, trl_idx, sprintf('/cubric/collab/meg-cleaning/cdf/resteyesopen/trainfeatures/mds/%d_mds',i))
     
 end
+
+
