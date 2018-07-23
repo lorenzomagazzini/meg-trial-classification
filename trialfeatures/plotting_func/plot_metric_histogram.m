@@ -2,6 +2,11 @@ function [  ] = plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 %plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 %   Plot histogram bars of a metric, comparing keep and reject trials.
 
+% Written by Lorenzo Magazzini (magazzinil@gmail.com)
+
+
+%%
+
 ntrl_keep = sum(trls_keep);
 ntrl_rjct = sum(trls_rjct);
 

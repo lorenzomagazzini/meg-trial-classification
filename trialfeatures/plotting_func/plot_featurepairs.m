@@ -5,6 +5,10 @@ function [  ] = plot_featurepairs( features, ntrl, trls_keep, trls_rjct )
 %       features        struct (only fields of size 1 x ntrl are kept)
 %       ...
 
+% Written by Lorenzo Magazzini (magazzinil@gmail.com)
+
+
+%%
 
 featurepairs = get_featurepairs(features, ntrl);
 nf = length(unique(featurepairs(:,2)));

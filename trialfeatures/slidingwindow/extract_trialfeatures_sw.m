@@ -2,11 +2,17 @@ function [ features ] = extract_trialfeatures_sw( data, do_plot )
 %[ features ] = extract_trialfeatures( data, do_plot )
 %   Extract a number of different trial features from the input data
 
+% Written by Lorenzo Magazzini (magazzinil@gmail.com)
+
+
+%%
+
 if nargin < 2 || isempty(do_plot)
     do_plot = false;
 else
     do_plot = istrue(do_plot);
 end
+
 
 %% initialise output
 
@@ -338,7 +344,4 @@ clear btwn_chan_corr_2d
 features.btwn_chan_corr = btwn_chan_corr;
 features.btwn_chan_corr_avg = btwn_chan_corr_avg;
 features.btwn_chan_corr_max = btwn_chan_corr_max;
-
-
-end
 

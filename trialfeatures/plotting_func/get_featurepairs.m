@@ -7,6 +7,11 @@ function [ featurepairs ] = get_featurepairs( features, ntrl )
 %   Output:
 %       featurepairs    cell array (P x 3, where P = number of feature pairs)
 
+% Written by Lorenzo Magazzini (magazzinil@gmail.com)
+
+
+%%
+
 features_fields = fieldnames(features);
 nf = length(features_fields);
 

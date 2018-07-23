@@ -6,6 +6,10 @@ function [ trl_dev ] = get_trial_deviation( data )
 %   Output:
 %       trl_dev: NChan x NTrl matrix.
 
+% Written by Diana Dima (diana.dima@gmail.com)
+
+%%
+
 trl = cat(3, data.trial{:});
 avg_amp = squeeze(mean(trl,2)); %average amplitude over time
 trl_dev = nan(size(trl,1),size(trl,3));
@@ -13,7 +17,5 @@ trl_dev = nan(size(trl,1),size(trl,3));
 for t = 1:size(trl,3)
     avg_other = avg_amp; avg_other(:,t) = [];
     trl_dev(:,t) = avg_amp(:,t) - mean(avg_other,2);
-end;
-
 end
 

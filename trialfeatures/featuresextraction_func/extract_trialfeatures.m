@@ -2,6 +2,8 @@ function [ features ] = extract_trialfeatures( data )
 %[ features ] = extract_trialfeatures( data )
 %   Extract a number of different trial features from the input data
 
+% Written by Lorenzo Magazzini (magazzinil@gmail.com)
+
 
 %% initialise output
 
@@ -107,7 +109,4 @@ btwn_chan_corr_max = max(btwn_chan_corr);
 features.btwn_chan_corr = btwn_chan_corr;
 features.btwn_chan_corr_avg = btwn_chan_corr_avg;
 features.btwn_chan_corr_max = btwn_chan_corr_max;
-
-
-end
 

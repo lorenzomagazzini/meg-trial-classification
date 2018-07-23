@@ -1,4 +1,7 @@
 
+% Written by Lorenzo Magazzini (magazzinil@gmail.com)
+
+
 %% power (frequency)
 
 %FFT analysis

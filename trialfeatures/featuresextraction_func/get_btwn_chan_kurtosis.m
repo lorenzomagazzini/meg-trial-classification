@@ -6,10 +6,10 @@ function [ btwn_chan_kurt ] = get_btwn_chan_kurtosis( data, slide_window )
 %                       NChan x 1 x NTrl matrix, when optional input slide_window is true.
 %       slide_window:   logical, optional input determining the dimension of the output matrix wthn_chan_var (default = false).
 %   Output:
-%       wthn_chan_kurt: NTime x NTrl matrix, when slide_window is false.
+%       btwn_chan_kurt: NTime x NTrl matrix, when slide_window is false.
 %                       NTime x 1 x NTrl matrix, when slide_window is true.
 
-% Written by Diana Dima
+% Written by Diana Dima (diana.dima@gmail.com)
 % Re-written in May 2018 by Lorenzo Magazzini (magazzinil@gmail.com)
 
 %%

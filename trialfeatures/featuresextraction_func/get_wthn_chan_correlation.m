@@ -10,7 +10,7 @@ function [ wthn_chan_corr ] = get_wthn_chan_correlation( data, slide_window )
 %       wthn_chan_corr:	NChan x NTrl matrix, when slide_window is false.
 %                       NChan x 1 x NTrl matrix, when slide_window is true.
 
-% Written by Diana Dima
+% Written by Diana Dima (diana.dima@gmail.com)
 % Re-written in May 2018 by Lorenzo Magazzini (magazzinil@gmail.com)
 
 %%
