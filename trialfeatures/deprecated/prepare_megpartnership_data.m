@@ -1,4 +1,9 @@
 
+%Script for preparing the epoched MEG data made avaiable in the "traindata" directory
+%Written by Lorenzo
+
+%%
+
 %Lorenzo's paths:
 addpath('/home/c1356674/git-lab/Trial-classification/trialfeatures/')
 addpath('/home/c1356674/git-lab/ampreject/functions')
