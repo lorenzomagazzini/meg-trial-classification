@@ -3,6 +3,11 @@ function [  ] = plot_metric_comparison( mtrc1, mtrc2, mtrc1_label, mtrc2_label, 
 %   Plot comparison of two metrics (e.g., within-channel variance, max VS sum).
 %   Also plot distribution of each metric separately, comparing keep and reject trials.
 
+% Written by Lorenzo Magazzini (magazzinil@gmail.com)
+
+
+%%
+
 %plotting colors
 color_keep = [35,139,69]/255;
 color_rjct = [215,48,31]/255;
