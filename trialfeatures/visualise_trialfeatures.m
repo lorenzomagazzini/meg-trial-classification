@@ -1,6 +1,9 @@
 
-%Visualise a number of different trial features extracted using function 
-%extract_trialfeatures and saved to file feature_file
+%Visualise a number of different trial features.
+%The features first need to be extracted using function extract_trialfeatures 
+%and are here loaded into memory from file (feature_file).
+
+% Written by Lorenzo Magazzini (magazzinil@gmail.com)
 
 
 %% load features
