@@ -1,16 +1,5 @@
 
 
-X = data.trial{1};
-close all
-figure, hold on
-for c = 1:size(X,1), plot(X(c,:),'k'); end
-COEFF = pca(X);
-plot(COEFF(:,1).*(max(max(abs(X)))),'r')
-COEFF = pca(abs(X));
-plot(COEFF(:,1).*(max(max(abs(X)))),'w')
-
-
-
 %% data padding
 
 paddata = data;
@@ -170,7 +159,19 @@ end
 figure, plot(1:nk, rmse)
 
 
-%% deprecated code
+%% testing PCA across channels (for single-trial data) ... deprecated
+
+% X = data.trial{1};
+% close all
+% figure, hold on
+% for c = 1:size(X,1), plot(X(c,:),'k'); end
+% COEFF = pca(X);
+% plot(COEFF(:,1).*(max(max(abs(X)))),'r')
+% COEFF = pca(abs(X));
+% plot(COEFF(:,1).*(max(max(abs(X)))),'w')
+
+
+%% more deprecated code
 
 % % r = 1
 % % %select single trial (Chan x Freq x Time matrix)
