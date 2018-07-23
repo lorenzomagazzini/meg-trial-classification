@@ -1,4 +1,8 @@
 
+%Deprecated chunks of code for features extraction.
+
+% Written by Lorenzo Magazzini (magazzinil@gmail.com)
+
 
 %% metric: Hurst exponent ( average & range across channels )
 
