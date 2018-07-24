@@ -25,7 +25,7 @@ feature_set = input('Choose feature set to use: max, within, between, within-bet
 do_balance = input('Balance classes? 0 = no, 1 = yes: ');
 
 all_data = cell(1,length(featurefiles)); all_labels = cell(1,length(featurefiles));
-results_kfold = struct; 
+results_kfold = cell(1,length(featurefiles)); 
 
 %Loop through files, extracting data.
 for subject = 1:length(featurefiles)
@@ -59,12 +59,13 @@ for subject = 1:length(featurefiles)
             rm_idx = class2(randperm(length(class2),abs(d)));
         end
         data(rm_idx,:) = [];
+        trl_idx(rm_idx) = []; %#ok<AGROW>
     end
     
     labels = double(trl_idx); %convert labels to double
     
     %Run 5-fold cross-validation within-subject:
-    results_kfold(subject) = svm_decode_kfold(data,labels', 'weights',true);
+    results_kfold{subject} = svm_decode_kfold(data,labels', 'weights',true);
     
     all_data{subject} = data; all_labels{subject} = labels;
     
@@ -78,7 +79,7 @@ end
     if length(all_data)>1
         
         %Run leave-one-subject-out cross-validation, and plot results:  
-        results_loocv = struct;
+        results_loocv = cell(1,length(featurefiles));
         for fold = 1:length(all_data)
             
             testdata = all_data{fold};
@@ -86,11 +87,10 @@ end
             traindata = all_data; traindata(fold) = []; traindata = cat(1,traindata{:});
             trainlabels = all_labels; trainlabels(fold) = []; trainlabels = cat(2,trainlabels{:})';
             
-            res = svm_decode_holdout(traindata, trainlabels, testdata, testlabels, 'weights', true);
-            results_loocv(fold) = res;
+            results_loocv{fold} = svm_decode_holdout(traindata, trainlabels, testdata, testlabels, 'weights', true);
         end
         
-        figure;plot_loocv_classification_results(results_loocv);
+        plot_loocv_classification_results(results_loocv);
         save(fullfile(savepath, 'results_loocv.mat'), 'results_loocv');
         
         %Finally, run 5-fold cross-validation across subjects:
