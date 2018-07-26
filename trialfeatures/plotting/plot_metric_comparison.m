@@ -46,17 +46,20 @@ hold on
 scatter(log(mtrc1_rjct), log(mtrc2_rjct), 'MarkerEdgeColor', color_rjct)
 xlabel(mtrc1_label)
 ylabel(mtrc2_label)
-title('log-scale comparison')
+title('log-scale comparison', 'FontWeight','normal')
 
 %plot distributions
 subplot(2,2,3)
 plot(mtrc1_ix_keep,mtrc1_iy_keep, 'Color',color_keep);
 hold on
 plot(mtrc1_ix_rjct,mtrc1_iy_rjct, 'Color',color_rjct);
-title([mtrc1_label ' distribution'])
+t = title([mtrc1_label ' distrib'], 'FontWeight','normal', 'FontSize',9);
+set(gca, 'FontSize',9)
 subplot(2,2,4)
 plot(mtrc2_ix_keep,mtrc2_iy_keep, 'Color',color_keep);
 hold on
 plot(mtrc2_ix_rjct,mtrc2_iy_rjct, 'Color',color_rjct);
-title([mtrc2_label ' distribution'])
+t = title([mtrc2_label ' distrib'], 'FontWeight','normal', 'FontSize',9);
+set(gca, 'FontSize',9)
+
 

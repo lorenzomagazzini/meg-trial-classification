@@ -7,8 +7,8 @@ function [  ] = plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
 %%
 
-ntrl_keep = sum(trls_keep);
-ntrl_rjct = sum(trls_rjct);
+ntrl_keep = length(trls_keep);
+ntrl_rjct = length(trls_rjct);
 
 n_bins = 20;
 hist_bins = linspace(min(mtrc), max(mtrc), n_bins);
