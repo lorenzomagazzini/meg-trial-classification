@@ -33,9 +33,11 @@ nsubj = length(file_list);
 slidingwindow = false; %slidingwindow=true runs "extract_trialfeatures_sw"
 
 %set filtering flags and save indexing order for later
+filtering_order = {'broadband','high-pass','low-pass'};
 hpfilt = [0,1,0];
 lpfilt = [0,0,1];
-filtering_order = {'broadband','high-pass','low-pass'};
+hpfilt_freq = 90;
+lpfilt_freq = 4;
 
 %loop over subjects
 for s = 1:nsubj
@@ -47,16 +49,14 @@ for s = 1:nsubj
     for filt = 1:3 %giant filtering loop
         
         %pre-processing (high freq) e.g. for muscle artifacts
-        do_hpfilt = hpfilt(filt);% 1;%
-        hpfilt_freq = 90;% [110 140];
+        do_hpfilt = hpfilt(filt);
         
         %pre-processing (low freq) e.g, for blinks and eye-movement artifacts
-        do_lpfilt = lpfilt(filt);% 1;%
-        lpfilt_freq = 4;
+        do_lpfilt = lpfilt(filt);
         
         %prepare cell array for storing subject data structures
         data_arr = cell(1,nsubj);
-
+        
         %preprocess data (if requested)
         if do_hpfilt == 1
             
@@ -103,7 +103,8 @@ for s = 1:nsubj
         load(fullfile(label_path, label_filename));
         
         %create trial index
-        trl_idx = zeros(1,length(data.trial)); trl_idx(badtrialsindex) = 1; %bad trials are labelled 1
+        trl_idx = zeros(1,length(data.trial)); 
+        trl_idx(badtrialsindex) = 1; %bad trials are labelled 1
         
         %extract features
         if istrue(slidingwindow)
@@ -114,22 +115,12 @@ for s = 1:nsubj
         
         %store in non-scalar struct
         features(filt) = deal(f);
-                
+        
     end
     
     %save to disk
     save(fullfile(feature_path, [num2str(s,'%02d') 'features.mat']), '-v7.3', 'filtering_order','trl_idx','features'); %keeping this as struct - as coded in svm data extraction script; labels are also here
     clear features
-    
-end
-
-
-%% get MDS plots
-
-for i = 1:2
-    
-    load(fullfile(feature_path, [num2str(i,'%02d') 'features.mat']));
-    plot_mds_features(features, trl_idx, sprintf('/cubric/collab/meg-cleaning/cdf/resteyesopen/trainfeatures/mds/%d_mds',i))
     
 end
 
