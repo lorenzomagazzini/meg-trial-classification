@@ -6,15 +6,42 @@
 % Written by Lorenzo Magazzini (magazzinil@gmail.com)
 
 
-%% load features
+%%
 
-load(feature_file)
+clear
+
+%define paths
+base_path = strrep(mfilename('fullpath'),'trialfeatures/run_extract_trialfeatures','');
+feature_path = fullfile(base_path, 'data', 'trainfeatures');
+
+%define subject to plot
+s = 1;
+
+%load features from file
+feature_file = fullfile(feature_path, [num2str(s,'%02d') 'features.mat']);
+load(feature_file, 'features')
+
+%create variables from structure fields
+feature_fields = fieldnames(features);
+for f = 1:length(feature_fields)
+    ff = features.(feature_fields{f});
+    eval([feature_fields{f} '=ff;']);
+end
+clear f
+clear ff
+clear feature_fields
+
+%load lables
+load(feature_file, 'trl_idx')
+trls_keep = find(~trl_idx); %trials to keep
+trls_rjct = find(trl_idx); %trials to reject
+ntrl = length(trl_idx);
 
 
-%% metric: within-channel variance ( sum & max across channels )
+%% metric: within-channel variance ( avg & max across channels )
 
 %plot (channels x trials matrix)
-close all
+% close all
 figure
 imagesc(log(wthn_chan_var'))
 colorbar
@@ -23,15 +50,15 @@ xlabel('channels')
 ylabel('trials')
 try colormap(cmocean('amp')); catch, colormap('hot'); end
 
-%plot comparison of compare variance sum VS variance max
-mtrc1 = wthn_chan_var_sum;
+%plot comparison of compare variance avg VS variance max
+mtrc1 = wthn_chan_var_avg;
 mtrc2 = wthn_chan_var_max;
-mtrc1_label = 'var sum';
+mtrc1_label = 'var avg';
 mtrc2_label = 'var max';
 plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
 
-%% metric: between-channel variance ( average & max over time )
+%% metric: between-channel variance ( avg & max over time )
 
 %plot (channels x trials matrix)
 % close all
@@ -51,13 +78,13 @@ mtrc2_label = 'var max';
 plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
 
-%% compare within-channel (sum) and between-channel (avg) variance
+%% compare within-channel (avg) and between-channel (avg) variance
 
 %plot_metric_comparison
-mtrc1 = wthn_chan_var_sum;
+mtrc1 = wthn_chan_var_avg;
 mtrc2 = btwn_chan_var_avg;
-mtrc1_label = 'within-chan var sum';
-mtrc2_label = 'between-chan var avg';
+mtrc1_label = 'var avg (wthn)';
+mtrc2_label = 'var avg (btwn)';
 plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
 
@@ -70,28 +97,28 @@ hF = gcf;
 hF.Units = 'pixels';
 hF.Position = [0 500 1500 300];
 
-mtrc = wthn_chan_var_sum;
-mtrc_label = 'within-channel variance sum';
+mtrc = wthn_chan_var_avg;
+mtrc_label = 'var avg (wthn)';
 subplot(1,4,1)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
 mtrc = wthn_chan_var_max;
-mtrc_label = 'within-channel variance max';
+mtrc_label = 'var max (wthn)';
 subplot(1,4,2)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
 mtrc = btwn_chan_var_avg;
-mtrc_label = 'between-channel variance avg';
+mtrc_label = 'var avg (btwn)';
 subplot(1,4,3)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
 mtrc = btwn_chan_var_max;
-mtrc_label = 'between-channel variance max';
+mtrc_label = 'var max (btwn)';
 subplot(1,4,4)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
 
-%% metric: within-channel kurtosis ( mean & max across channels )
+%% metric: within-channel kurtosis ( avg & max across channels )
 
 %plot (channels x trials matrix)
 % close all
@@ -103,15 +130,15 @@ xlabel('channels')
 ylabel('trials')
 try colormap(cmocean('amp')); catch, colormap('hot'); end
 
-%plot comparison of compare variance sum VS variance max
-mtrc1 = wthn_chan_kurt_mean;
+%plot comparison of compare variance avg VS variance max
+mtrc1 = wthn_chan_kurt_avg;
 mtrc2 = wthn_chan_kurt_max;
-mtrc1_label = 'kurt mean';
+mtrc1_label = 'kurt avg';
 mtrc2_label = 'kurt max';
 plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
 
-%% metric: between-channel kurtosis ( average & max over time )
+%% metric: between-channel kurtosis ( avg & max over time )
 
 %plot (channels x trials matrix)
 % close all
@@ -124,9 +151,9 @@ ylabel('trials')
 try colormap(cmocean('amp')); catch, colormap('hot'); end
 
 %plot_metric_comparison
-mtrc1 = btwn_chan_kurt_mean;
+mtrc1 = btwn_chan_kurt_avg;
 mtrc2 = btwn_chan_kurt_max;
-mtrc1_label = 'kurt mean';
+mtrc1_label = 'kurt avg';
 mtrc2_label = 'kurt max';
 plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
@@ -140,23 +167,23 @@ hF = gcf;
 hF.Units = 'pixels';
 hF.Position = [0 500 1500 300];
 
-mtrc = wthn_chan_kurt_mean;
-mtrc_label = 'within-channel kurtosis mean';
+mtrc = wthn_chan_kurt_avg;
+mtrc_label = 'kurt avg (wthn)';
 subplot(1,4,1)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
 mtrc = wthn_chan_kurt_max;
-mtrc_label = 'within-channel kurtosis max';
+mtrc_label = 'kurt max (wthn)';
 subplot(1,4,2)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
-mtrc = btwn_chan_kurt_mean;
-mtrc_label = 'between-channel kurtosis mean';
+mtrc = btwn_chan_kurt_avg;
+mtrc_label = 'kurt avg (btwn)';
 subplot(1,4,3)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
 mtrc = btwn_chan_kurt_max;
-mtrc_label = 'between-channel kurtosis max';
+mtrc_label = 'kurt max (btwn)';
 subplot(1,4,4)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
@@ -166,12 +193,13 @@ plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 %plot_metric_comparison
 mtrc1 = btwn_chan_var_max; %between-channel variance, max across time
 mtrc2 = wthn_chan_kurt_max; %within-channel kurtosis, max across channels
-mtrc1_label = 'btwn-chan var';
-mtrc2_label = 'wthn-chan kurt';
+mtrc1_label = 'var (btwn)';
+mtrc2_label = 'kurt (wthn)';
 plot_metric_comparison(mtrc1, mtrc2, mtrc1_label, mtrc2_label, trls_keep, trls_rjct)
 
 
-%% channel correlations (trials with artifacts will have higher between-channel correlation)
+%% between-channel correlations
+%(trials with artifacts could have higher between-channel correlation)
 
 %plot
 % close all
@@ -184,39 +212,108 @@ color_keep = [35,139,69]/255;
 color_rjct = [215,48,31]/255;
 color_plot = nan(ntrl,3);
 for t = 1:ntrl
-    if trls_keep(t)
+    if ismember(t,trls_keep)
         color_plot(t,:) = color_keep;
     else
         color_plot(t,:) = color_rjct;
     end
     hold on
-    plot(chan_corr(:,t), 'color',color_plot(t,:))
-    xlim([1 size(chan_corr,1)])
+    plot(btwn_chan_corr(:,t), 'color',color_plot(t,:))
+    xlim([0 size(btwn_chan_corr,1)])
     ylim([0 1])
-    xlabel('channels')
+    xlabel('samples')
     ylabel('avg corr')
 end
-title('avg chan corr')
+title('btwn-chan corr')
 subplot(1,3,2)
-scatter(1:ntrl, chan_corr_mean, 10, color_plot, 'filled')
+scatter(1:ntrl, btwn_chan_corr_avg, 10, color_plot, 'filled')
 xlim([1 ntrl])
 ylim([0 1])
 xlabel('trials')
-title('mean avg chan corr')
+title('avg btwn-chan corr')
 subplot(1,3,3)
-scatter(1:ntrl, chan_corr_max, 10, color_plot, 'filled')
+scatter(1:ntrl, btwn_chan_corr_max, 10, color_plot, 'filled')
 xlim([1 ntrl])
 ylim([0 1])
 xlabel('trials')
-title('max avg chan corr')
+title('max btwn-chan corr')
 
 
 %plot (channels x trials matrix)
 % close all
 figure
-imagesc(chan_corr')
+imagesc(btwn_chan_corr')
 colorbar
-title('channel correlation')
+title('between-channel correlation')
+xlabel('samples')
+ylabel('trials')
+try colormap(cmocean('amp')); catch, colormap('hot'); end
+
+
+%plot histogram bars separately for keep and reject trials
+figure('color','w')
+hF = gcf;
+hF.Units = 'pixels';
+hF.Position = [0 500 900 300];
+
+mtrc = btwn_chan_corr_avg;
+mtrc_label = 'avg btwn-chan corr';
+subplot(1,2,1)
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+mtrc = btwn_chan_corr_max;
+mtrc_label = 'max btwn-chan corr';
+subplot(1,2,2)
+plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+
+%% within-channel correlations
+%(trials with artifacts could have higher within-channel correlation)
+
+%plot
+% close all
+figure('color','w')
+hF = gcf;
+hF.Units = 'pixels';
+hF.Position = [0 500 1200 300];
+subplot(1,3,1)
+color_keep = [35,139,69]/255;
+color_rjct = [215,48,31]/255;
+color_plot = nan(ntrl,3);
+for t = 1:ntrl
+    if ismember(t,trls_keep)
+        color_plot(t,:) = color_keep;
+    else
+        color_plot(t,:) = color_rjct;
+    end
+    hold on
+    plot(wthn_chan_corr(:,t), 'color',color_plot(t,:))
+    xlim([1 size(wthn_chan_corr,1)])
+    ylim([0 1])
+    xlabel('channels')
+    ylabel('avg corr')
+end
+title('wthn-chan corr')
+subplot(1,3,2)
+scatter(1:ntrl, wthn_chan_corr_avg, 10, color_plot, 'filled')
+xlim([1 ntrl])
+ylim([0 1])
+xlabel('trials')
+title('avg wthn-chan corr')
+subplot(1,3,3)
+scatter(1:ntrl, wthn_chan_corr_max, 10, color_plot, 'filled')
+xlim([1 ntrl])
+ylim([0 1])
+xlabel('trials')
+title('max wthn-chan corr')
+
+
+%plot (channels x trials matrix)
+% close all
+figure
+imagesc(wthn_chan_corr')
+colorbar
+title('within-channel correlation')
 xlabel('channels')
 ylabel('trials')
 try colormap(cmocean('amp')); catch, colormap('hot'); end
@@ -228,13 +325,22 @@ hF = gcf;
 hF.Units = 'pixels';
 hF.Position = [0 500 900 300];
 
-mtrc = chan_corr_mean;
-mtrc_label = 'mean channel correlation';
+mtrc = wthn_chan_corr_avg;
+mtrc_label = 'avg wthn-chan corr';
 subplot(1,2,1)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
 
-mtrc = chan_corr_max;
-mtrc_label = 'max channel correlation';
+mtrc = wthn_chan_corr_max;
+mtrc_label = 'max wthn-chan corr';
 subplot(1,2,2)
 plot_metric_histogram( mtrc, mtrc_label, trls_keep, trls_rjct )
+
+
+%% MDS plots
+
+%define output filename here (will be saved as .fig)
+outfile = 'test'
+
+close all
+plot_mds_features(features, trl_idx, outfile)
 
