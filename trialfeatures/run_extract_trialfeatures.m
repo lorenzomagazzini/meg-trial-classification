@@ -8,7 +8,7 @@
 
 clear
 
-%add paths
+%add paths relative to the location of the current .m file (run script from "trialfeatures" directory)
 base_path = strrep(mfilename('fullpath'),'trialfeatures/run_extract_trialfeatures','');
 addpath(genpath(base_path))
 
@@ -28,6 +28,9 @@ nsubj = length(file_list);
 
 
 %% load and preprocess data for each filtering condition
+
+%use sliding-window approach (=true) or not (=false)
+slidingwindow = false; %slidingwindow=true runs "extract_trialfeatures_sw"
 
 %set filtering flags and save indexing order for later
 hpfilt = [0,1,0];
@@ -98,14 +101,23 @@ for s = 1:nsubj
         %now load the trial labels
         label_filename = strrep(file_list{s}, 'meg-epoched', 'epoch-labels');
         load(fullfile(label_path, label_filename));
-        %create trial index
-        trl_idx = zeros(1,length(data.trial)); trl_idx(badtrialsindex) = 1; %bad trials are labeled 1
         
-        f = extract_trialfeatures(data); 
-        features(filt) = deal(f); %store in non-scalar struct
+        %create trial index
+        trl_idx = zeros(1,length(data.trial)); trl_idx(badtrialsindex) = 1; %bad trials are labelled 1
+        
+        %extract features
+        if istrue(slidingwindow)
+            f = extract_trialfeatures_sw(data); %use sliding-window approach
+        else
+            f = extract_trialfeatures(data);
+        end
+        
+        %store in non-scalar struct
+        features(filt) = deal(f);
                 
     end
     
+    %save to disk
     save(fullfile(feature_path, [num2str(s,'%02d') 'features.mat']), '-v7.3', 'filtering_order','trl_idx','features'); %keeping this as struct - as coded in svm data extraction script; labels are also here
     clear features
     
@@ -120,5 +132,4 @@ for i = 1:2
     plot_mds_features(features, trl_idx, sprintf('/cubric/collab/meg-cleaning/cdf/resteyesopen/trainfeatures/mds/%d_mds',i))
     
 end
-
 
