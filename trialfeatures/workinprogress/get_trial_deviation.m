@@ -6,7 +6,7 @@ function [ trl_dev ] = get_trial_deviation( data )
 %   Output:
 %       trl_dev: NChan x NTrl matrix.
 
-% Written by Diana Dima (diana.dima@gmail.com)
+% Written by Diana Dima (diana.c.dima@gmail.com)
 
 %%
 

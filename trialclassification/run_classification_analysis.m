@@ -16,7 +16,7 @@ function [  ] = run_classification_analysis( featurefiles, savepath )
 %                                      2. to decide if majority class should be subsampled
 %                                      3. to select which filtered features you want to use.
 %
-% DC Dima 2018 (diana.dima@gmail.com)
+% DC Dima 2018 (diana.c.dima@gmail.com)
 
 %Choose what feature set you want to test (see get_svm_data.m):
 feature_set = input('Choose feature set to use: max, within, between, within-between, single-value: ', 's');

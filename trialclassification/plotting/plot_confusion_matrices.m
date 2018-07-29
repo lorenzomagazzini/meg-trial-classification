@@ -4,7 +4,7 @@ function [ ] = plot_confusion_matrices( filenames, titles)
 %      filenames are the files to load, each containing a scalar results structure
 %      titles is a cell array with the titles to assign each subplot
 %
-% Dima DC 2018 (diana.dima@gmail.com)
+% Dima DC 2018 (diana.c.dima@gmail.com)
 
 sub_n = ceil(length(filenames)/2); %subplots will be organized in 2 rows
 figure('color','w');

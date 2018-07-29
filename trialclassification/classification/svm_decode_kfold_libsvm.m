@@ -22,7 +22,7 @@ function [ results ] = svm_decode_kfold_libsvm( data, labels, varargin )
 % Outputs results structure with non-optional metrics: AUC, ROC, accuracy, Fscore, sensitivity, specificity.
 % Optional: weights and weight-derived patterns.
 %
-% DC Dima 2018 (diana.dima@gmail.com)
+% DC Dima 2018 (diana.c.dima@gmail.com)
 
 
 %parse inputs

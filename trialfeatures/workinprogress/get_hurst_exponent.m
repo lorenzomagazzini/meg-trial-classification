@@ -6,7 +6,7 @@ function [ hexp ] = get_hurst_exponent( data )
 %   Output:
 %       hexp: NChan x NTrl matrix.
 
-% Written by Diana Dima (diana.dima@gmail.com)
+% Written by Diana Dima (diana.c.dima@gmail.com)
 
 %%
 

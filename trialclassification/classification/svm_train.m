@@ -13,7 +13,7 @@ function svm_model = svm_train (train_data, train_labels, varargin)
 % Outputs svm model.
 % Optional (as above): weight-derived patterns. (Raw weights are always output in svm_model.w)
 %
-% DC Dima 2018 (diana.dima@gmail.com)
+% DC Dima 2018 (diana.c.dima@gmail.com)
 
 %parse inputs
 svm_par = svm_args; %define an object containing default parameters

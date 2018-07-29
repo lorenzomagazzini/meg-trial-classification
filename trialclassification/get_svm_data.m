@@ -9,7 +9,7 @@ function [ data ] = get_svm_data (features, feature_set )
 %       --within-between: combine the two
 %       --single-value: all summary features (1 value per trial)
 %
-% DC Dima 2018 (diana.dima@gmail.com)
+% DC Dima 2018 (diana.c.dima@gmail.com)
 
 switch feature_set %based on input, features from a specific set are concatenated into a feature vector
     

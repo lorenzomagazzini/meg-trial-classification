@@ -5,7 +5,7 @@ function [ ] = plot_mds_features( features, trl_idx, outfile)
 %         --outfile - figure filename. For non-scalar structure arrays, the
 %                     number of figures saved = the size of the structure array.
 
-% Written by Diana Dima (diana.dima@gmail.com)
+% Written by Diana Dima (diana.c.dima@gmail.com)
 
 
 %%

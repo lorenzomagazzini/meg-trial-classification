@@ -1,7 +1,7 @@
 
 %Extract trial features from MEG data
 
-% Written by L Magazzini (magazzinil@gmail.com) and DC Dima (diana.dima@gmail.com)
+% Written by L Magazzini (magazzinil@gmail.com) and DC Dima (diana.c.dima@gmail.com)
 
 
 %%

@@ -9,7 +9,7 @@ function [ wthn_chan_kurt ] = get_wthn_chan_kurtosis( data, slide_window )
 %       wthn_chan_kurt: NChan x NTrl matrix, when slide_window is false.
 %                       NChan x 1 x NTrl matrix, when slide_window is true.
 
-% Written by Diana Dima (diana.dima@gmail.com)
+% Written by Diana Dima (diana.c.dima@gmail.com)
 % Re-written in May 2018 by Lorenzo Magazzini (magazzinil@gmail.com)
 
 %%

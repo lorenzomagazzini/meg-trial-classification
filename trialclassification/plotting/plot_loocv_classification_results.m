@@ -3,7 +3,7 @@ function [ ] = plot_loocv_classification_results( results )
 % Input: results - either a struct (scalar or vectorial), or a cell array containing structs
 %        useful for visualizing LOO-CV results, where we have results for each left-out participant.
 %
-%Dima DC 2018 (diana.dima@gmail.com)
+%Dima DC 2018 (diana.c.dima@gmail.com)
 
 if iscell(results) %case cell array, just store them in a structure
     for i = 1:length(results)

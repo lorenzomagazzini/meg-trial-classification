@@ -14,7 +14,7 @@ function results = svm_decode_holdout (train_data, train_labels, test_data, test
 % Outputs results structure with non-optional metrics: accuracy, Fscore, sensitivity, specificity.
 % Optional (as above): weights and weight-derived patterns. (Set 'weights',true)
 %
-% DC Dima 2018 (diana.dima@gmail.com)
+% DC Dima 2018 (diana.c.dima@gmail.com)
 
 %parse inputs
 svm_par = svm_args;

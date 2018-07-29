@@ -5,7 +5,7 @@
 %          number of folds and number of cross-validation iterations
 %          feature standardization and weights
 %
-% DC Dima 2018 (diana.dima@gmail.com)
+% DC Dima 2018 (diana.c.dima@gmail.com)
 
 classdef svm_args
     
