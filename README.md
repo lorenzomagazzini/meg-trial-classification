@@ -1,10 +1,18 @@
 # Trial classification: automatic detection of trials containing artefacts in MEG data
 
-The code contained within this repository is a project to extract informative summary statistics from epoched MEG data (trial features) and use them as input to a Support Vector Machine (SVM) classifier in order to automatically identify artefacts (trial classification).
+## meg-trial-classification
 
-The pipeline currently includes 2 stages:
+This repository is a project in collaboration between [dianadima](https://github.com/dianadima/) and [lorenzomagazzini](https://github.com/lorenzomagazzini/). The code was written for two purposes:
 
-1. [Features extraction](https://gitlab.cubric.cf.ac.uk/c1465333/Trial-classification/wikis/Features%20extraction)
-2. [Classification](https://gitlab.cubric.cf.ac.uk/c1465333/Trial-classification/wikis/Trial%20classification)
+1. [Features extraction](https://github.com/lorenzomagazzini/meg-trial-classification/wiki/Features-extraction): extract informative summary statistics from epoched MEG data (directory [trialfeatures](https://github.com/lorenzomagazzini/meg-trial-classification/tree/master/trialfeatures));
+2. [Classification](https://github.com/lorenzomagazzini/meg-trial-classification/wiki/Trial-classification): use the features as input to a Support Vector Machine (SVM) classifier, in order to automatically identify trials containing artefacts (directory [trialclassification](https://github.com/lorenzomagazzini/meg-trial-classification/tree/master/trialclassification)).
 
-The code requires the [Fieldtrip toolbox](http://www.fieldtriptoolbox.org/) and was last tested with FieldTrip version [20180630](ftp://ftp.fieldtriptoolbox.org/pub/fieldtrip/) in MATLAB R2015a.
+The code can be run using the example .mat files included within this repository (directory [data](https://github.com/lorenzomagazzini/meg-trial-classification/tree/master/data)).
+
+## Dependencies
+
+This code requires the [Fieldtrip toolbox](http://www.fieldtriptoolbox.org/) and was last tested with [FieldTrip version](ftp://ftp.fieldtriptoolbox.org/pub/fieldtrip/) _20180630_ in [MATLAB](https://www.mathworks.com/) _R2015a_.
+
+The SVM classifier requires two libraries, [liblinear](https://github.com/cjlin1/liblinear) and [libsvm](https://github.com/cjlin1/libsvm), both included within this repository.
+
+The colour maps in some of the figures were generated using [cmocean](https://github.com/matplotlib/cmocean) [for MATLAB](https://uk.mathworks.com/matlabcentral/fileexchange/57773-cmocean-perceptually-uniform-colormaps).
