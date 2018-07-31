@@ -15,4 +15,4 @@ This code requires the [Fieldtrip toolbox](http://www.fieldtriptoolbox.org/) and
 
 The SVM classifier requires two libraries, [liblinear](https://github.com/cjlin1/liblinear) and [libsvm](https://github.com/cjlin1/libsvm), both included within this repository.
 
-The colour maps in some of the figures were generated using [cmocean](https://github.com/matplotlib/cmocean) [for MATLAB](https://uk.mathworks.com/matlabcentral/fileexchange/57773-cmocean-perceptually-uniform-colormaps).
+The colour maps in some of the figures were generated using [cmocean](https://github.com/matplotlib/cmocean) [for MATLAB](https://uk.mathworks.com/matlabcentral/fileexchange/57773-cmocean-perceptually-uniform-colormaps) and [viridis](https://bids.github.io/colormap/) [for MATLAB](https://uk.mathworks.com/matlabcentral/fileexchange/51986-perceptually-uniform-colormaps).
